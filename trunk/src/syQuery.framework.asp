@@ -151,10 +151,10 @@ $.mix( syQuery, {
 		syQuery[ name ] = function(){}
 		
 		if ( config != undefined ){
-			syQuery.augment(syQuery[ name ], config);
-		}
-		
-		fn( syQuery[name] );
+			fn( syQuery[name], config() );
+		}else{
+			fn( syQuery[name] );
+		}	
 	}
 } );
 
@@ -382,5 +382,170 @@ syQuery.add("application", function(A){
 		}
 		
 	});
+});
+
+/**
+ * 文件打包类
+ * 对文件进行base64编码后打包在一个xml文件中
+ * 方法 pack unpack
+ */
+syQuery.add("package", function(P, J){
+	// 为该类扩展方法
+	syQuery.augment(P, {
+	
+		// PACK 打包文件的方法
+		pack : function(which, toWhere, options){
+		/**
+		 * which 打包文件夹（打包后此文件夹不包含在内）
+		 * toWhere 打包后文件存放地址
+		 * options 配置参数
+					- repFolder 文件夹替换方法
+					- repFile   文件替换方法
+					- packFolder 文件夹正在打包时的方法
+					- packFile 文件正在打包时的方法
+					- success 打包成功后执行的方法
+					- error 打包失败后执行的方法
+					
+		 */
+			var packageXml = '<?xml version="1.0"?><package xmlns:dt="urn:schemas-microsoft-com:datatypes"><count><foldercount></foldercount><filecount></filecount></count><content><folders></folders><files></files></content></package>',
+				allFolders = this.allFolder(which), 
+				xml = $.xml(packageXml), 
+				root = xml[0],
+				object = xml[1],
+				self = this;
+				
+			if ( allFolders.length > 0 )
+			{
+				if ( root != null )
+				{
+					try{
+						// 处理文件夹
+						$(root, object).find("count foldercount").text(allFolders.length); // 添加数量
+						
+						// 循环写入文件
+						$.arrEach(allFolders, function(i, k){
+							k = k.replace(/\.\.\//g, "");
+							$(root, object).find("content folders").append("item").html( options!= undefined && options.repFolder != undefined && $.isFunction(options.repFolder) ? options.repFolder(k + "") : k + "");
+							if ( options!= undefined && options.packFolder != undefined && $.isFunction(options.packFolder) ) options.packFolder(k);
+						});
+						
+						// 处理文件
+						$(allFolders, J.fso).collect("f", true).each(function(i, k){
+							var text = self._t2b($(k, $.stream()).load(1).get(0));
+							k = k.replace(/\.\.\//g, "");
+							var element = $(root, object).find("content files").append("item").html(text + "").attrs({
+								path : (options!= undefined && options.repFile != undefined && $.isFunction(options.repFile) ? options.repFile(k + "") : k + ""),
+								filename : ( k.split("/").slice(-1).join("") )
+							});
+							if ( options!= undefined && options.packFile != undefined && $.isFunction(options.packFile) ) options.packFile(k);
+						});
+						
+						$(root, object).saveXML(toWhere);
+						
+						if ( options!= undefined && options.success != undefined && $.isFunction(options.success) ) options.success(toWhere);
+						
+					}catch(e){
+						if ( options!= undefined && options.error != undefined && $.isFunction(options.error) ) options.error(e.message);
+					}
+				}
+			}
+			
+		},
+		
+		// 解包文件的方法
+		unpack : function(which, toWhere, options){
+		/**
+		 * which 解包文件地址
+		 * toWhere 解包文件夹地址
+		 * options 配置参数
+					- repFolder 文件夹替换方法
+					- repFile   文件替换方法
+					- packFolder 文件夹正在打包时的方法
+					- packFile 文件正在打包时的方法
+					- success 打包成功后执行的方法
+					- error 打包失败后执行的方法
+					
+		 */
+			var xml = $.xml(which),
+				root = xml[0],
+				object = xml[1],
+				self = this;
+				
+			if ( root != null )
+			{
+				try{
+					// 批量创建文件夹
+					var fo = $(root, object).find("content folders item").map(function(i, k){
+						var text = toWhere + "/" + $(k, object).text();
+						if ( options!= undefined && options.packFolder != undefined && $.isFunction(options.packFolder) ) options.packFolder(text);
+						if ( options!= undefined && options.repFolder != undefined && $.isFunction(options.repFolder) ) text = options.repFolder(text);
+						return text;
+					}).toArray();
+					
+					$(fo, J.fso).create();
+					
+					// 批量创建文件
+					var fi = $(root, object).find("content files item").each(function(i, k){
+						var path = toWhere + "/" + $(k, object).attr("path"), filename = $(k, object).attr("filename"), text = self._b2t($(k, object).text());
+						if ( options!= undefined && options.repFile != undefined && $.isFunction(options.repFile) ) path = options.repFile(path);
+						$.save(text, path, $.stream(), 1);
+						if ( options!= undefined && options.packFile != undefined && $.isFunction(options.packFile) ) options.packFile(path, filename);
+					});
+					
+					if ( options!= undefined && options.success != undefined && $.isFunction(options.success) ) options.success(toWhere);
+				}catch(e){
+					if ( options!= undefined && options.error != undefined && $.isFunction(options.error) ) options.error(e.message);
+				}
+			}
+			
+		},
+		
+		allFolder : function(which){
+			var fso = J.fso, Arr = [],
+				first = $(which, fso).collect("o", true), self = this;
+			
+			Arr = self._addArray(Arr, first.toArray());
+			
+			if ( first.size() > 0 ){
+				Arr = self._addArray(Arr, first.map(function(i, k){
+					return self.allFolder(k);
+				}).toArray());
+			}
+			return Arr;
+		},
+		
+		// 以下2个方法是对二进制和BASE64的转换
+		_t2b : function(t){
+			if ( t == null ) return "";
+			var temp = J.xml.createElement("file");
+			temp.dataType = "bin.base64";
+			temp.nodeTypedValue = t;
+			return temp.text;
+		},
+		
+		_b2t : function(b){
+			var temp = J.xml.createElement("file");
+			temp.dataType = "bin.base64";
+			temp.text = b;
+			return temp.nodeTypedValue;
+		},
+		
+		_addArray : function(tar, sour){
+			for ( var i = 0 ; i < sour.length ; i++ )
+			{
+				tar.push(sour[i]);
+			}
+			return tar;
+		}
+	});
+}, function(){
+
+	var xml, fso = $.fso();
+	try{ xml = $.active("Microsoft.XMLDOM"); }catch(e){ xml = $.active("Msxml2.DOMDocument.5.0"); }
+	
+	return {
+		xml : xml,
+		fso : fso
+	}
 });
 %>

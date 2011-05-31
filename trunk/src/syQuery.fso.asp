@@ -26,18 +26,14 @@
 		},
 		
 		create : function(f, o){
-			try{ 
-				f = $.formatpath(f).split("/");
-				var temp = "", newpath = "";
-				for ( var i = 0 ; i < f.length ; i++ ){
-					temp += f[i] + "/";
-					newpath = $.formatpath(temp);
+			f = $.formatpath(f).split("/");
+			var temp = "", newpath = "";
+			for ( var i = 0 ; i < f.length ; i++ ){
+				temp += f[i] + "/";
+				newpath = $.formatpath(temp);
+				try{
 					o.CreateFolder(Server.MapPath(newpath));
-				}
-				return true;
-			}catch(e){
-				$.setError(e.message);
-				return false;
+				}catch(e){}
 			}
 		},
 		
