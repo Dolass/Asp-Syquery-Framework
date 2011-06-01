@@ -155,6 +155,10 @@ $.mix( syQuery, {
 		}else{
 			fn( syQuery[name] );
 		}	
+	},
+	
+	timer : function(){
+		return new Date().getTime();
 	}
 } );
 
@@ -550,6 +554,138 @@ syQuery.add("package", function(P, J){
 });
 
 syQuery.add("page", function(P){
-	
+	syQuery.augment(P, {
+		init : function(options, absolutePage, pageSize, callback)
+		{
+		
+			var backstr = { total : 0, pagesize : 0, absolutePage : 0, pageCount : 0 }
+
+			if ( $.isArray(options) )
+			{
+				backstr.total = options.length;	
+				if ( pageSize > backstr.total ) pageSize = backstr.total;
+				backstr.pagesize = pageSize;
+				backstr.pageCount = Math.ceil( backstr.total / backstr.pagesize );
+				if ( absolutePage > backstr.pageCount ) absolutePage = backstr.pageCount;
+				backstr.absolutePage = absolutePage;
+				if ( backstr.pagesize < 0 ) backstr.pagesize = 0;
+				if ( backstr.absolutePage < 1 ) backstr.absolutePage = 1;
+				
+				var curPage = (backstr.absolutePage - 1) < 0 ? 0 : (backstr.absolutePage - 1);
+				var start = curPage * backstr.pagesize, end = backstr.absolutePage * backstr.pagesize - 1;
+				var temp_start = start;
+				
+				while ( start <= end )
+				{
+					if ( callback != undefined ) callback.call(options[start], options[start], temp_start - start + 1);
+					start++;
+				}
+				
+			}
+			else
+			{
+				if ( absolutePage != undefined ) options.absolutePage = absolutePage;
+				if ( pageSize != undefined ) options.pagesize = pageSize;
+				if ( callback != undefined ) options.callback = callback;
+				
+				// 继承配置项
+				
+				options = $.extend({
+					table : "", // 表名
+					area : [], // 字段集合
+					key : "", // 主键
+					absolutePage : 1, // 当前页
+					pagesize : 10, // 每条记录条数
+					where : null, // 条件
+					order : null, //排序
+					conn : null, // 数据库对象
+					callback : null // 回调方法
+				}, options || {});
+				
+				if ( options.conn == null ) return backstr;
+				
+				// 验证参数
+				
+				if ( options.where == null ){
+					options.where = "";
+				}else{
+					options.where = " Where " + options.where + " ";
+				}
+				
+				if ( options.order == null ){
+					options.order = "";
+				}else{
+					options.order = " Order By " + options.order + " ";
+				}
+				
+				// 执行过程
+				
+				$.record({
+					conn : options.conn,
+					hook : [
+						{
+							sql : "Select " + options.area.join(",") + " From " + options.table + options.where + options.order,
+							type : 1,
+							callback : function(rs)
+							{
+								var count = rs.recordcount, i = 1;
+								if ( options.pagesize > count ) options.pagesize = count;
+								var size = Math.ceil( count / options.pagesize );
+								if ( options.absolutePage > size ) options.absolutePage = size;
+								
+								rs.PageSize = options.pagesize;
+								rs.AbsolutePage = options.absolutePage;
+								
+								backstr.total = count;
+								backstr.pagesize = options.pagesize;
+								backstr.absolutePage = options.absolutePage;
+								backstr.pageCount = size;
+								
+								if ( backstr.pagesize < 0 ) backstr.pagesize = 0;
+								if ( backstr.absolutePage < 1 ) backstr.absolutePage = 1;
+								
+								while ( !rs.Eof &&  i <= rs.PageSize )
+								{
+									if ( options.callback != undefined ) options.callback.call(rs, rs, i);
+									i++;
+									rs.MoveNext();
+								}
+							}
+						}
+					]
+				});	
+			}
+			
+			// 返回数据
+			
+			return backstr;
+		},
+		
+		pagebar : function( total, pageSize, absolutePage, pageCount )
+		{
+			var l_cur = absolutePage, r_cur = absolutePage, space = 0;
+			while ( (l_cur > 1) && (r_cur < pageCount) && ((absolutePage - l_cur) < 4) )
+			{
+				l_cur--; r_cur++;
+			}
+			space = absolutePage - l_cur;
+			l_cur = absolutePage - space, r_cur = absolutePage + space;
+		
+			if( l_cur == 1 ) 
+			{
+				r_cur = 4 - space + r_cur;
+			}
+			else if ( r_cur == pageCount )
+			{
+				l_cur = l_cur - (4 - space);
+			}
+
+			if ( l_cur < 1 ) l_cur = 1;
+			if ( r_cur > pageCount ) r_cur = pageCount;
+			
+			
+			return { start : l_cur, end : r_cur }
+		}
+	});
 });
 %>
