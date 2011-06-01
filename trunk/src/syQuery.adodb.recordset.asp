@@ -106,6 +106,7 @@
 			 *		# complete 		<function>	所有操作完成后回调方法
 			 *		# protect		<boolean>	是否使用事务处理机制
 			 *		# onError  		<function>	错误的回调方法(仅使用与事务处理模式)
+			 *		# static 		<integer> 处理打开方式
 			 */
 			 
 			if ( options == undefined ) 		return $.active($.config.ActivexObject.record);
@@ -125,7 +126,7 @@
 					if ( j.sql == undefined ) continue ;
 					if ( j.type == undefined ) continue ;
 
-					options.rs.Open(j.sql, options.conn, 1, j.type);
+					options.rs.Open(j.sql, options.conn, ( options.stat == undefined ? 1 : options.stat ), j.type);
 					
 					if ( $.isFunction(j.callback) )
 					{
@@ -168,7 +169,7 @@
 	});
 	
 	$.fn.extend({
-		select : function( conn, rs )
+		select : function( conn, rs, stat )
 		{
 			var Arr = $.map(this, function( i, k ){
 				if ( !$.isJson(k) ) return null;
@@ -177,7 +178,7 @@
 			});
 			if ( Arr.length > 0 )
 			{
-				$.record({ rs : rs, conn : conn, hook : Arr});
+				$.record({ rs : rs, conn : conn, hook : Arr, stat : stat});
 			}
 		},
 		/**
@@ -234,6 +235,7 @@
 				if ( options.complete != undefined ) p.complete = options.complete;
 				if ( options.protect != undefined ) p.protect = options.protect;
 				if ( options.onError != undefined ) p.onError = options.onError;
+				if ( options.stat != undefined ) p.stat = options.stat;
 			}
 			$.record(p);
 		},

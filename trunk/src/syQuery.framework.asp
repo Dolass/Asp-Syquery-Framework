@@ -548,4 +548,8 @@ syQuery.add("package", function(P, J){
 		fso : fso
 	}
 });
+
+syQuery.add("page", function(P){
+	
+});
 %>
