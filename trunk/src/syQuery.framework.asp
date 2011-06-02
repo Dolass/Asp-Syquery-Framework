@@ -69,7 +69,11 @@ $.mix( syQuery, {
 					r = context.indexOf("-->");
 					p = context.substring(0, r);
 					e = $.trim(p.replace(" file=\"", "").replace("\"", ""));
-					t = localFo + "/" + e;
+					if ( localFo.length == 0 ){
+						t = e;
+					}else{
+						t = localFo + "/" + e;
+					}
 					context = context.substring(r + 3);
 					tempText = syQuery.catchFile(t, stream);
 					text += syQuery.catchContent(tempText, stream, t.split("/").slice(0, -1).join("/"));
