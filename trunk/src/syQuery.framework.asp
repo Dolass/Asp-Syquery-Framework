@@ -558,7 +558,7 @@ syQuery.add("page", function(P){
 		init : function(options, absolutePage, pageSize, callback)
 		{
 		
-			var backstr = { total : 0, pagesize : 0, absolutePage : 0, pageCount : 0 }
+			var backstr = { total : 0, pagesize : 0, absolutePage : 0, pageCount : 0 }, _this = this;
 
 			if ( $.isArray(options) )
 			{
@@ -582,7 +582,7 @@ syQuery.add("page", function(P){
 				}
 				
 			}
-			else
+			else if ( $.isJson(options) )
 			{
 				if ( absolutePage != undefined ) options.absolutePage = absolutePage;
 				if ( pageSize != undefined ) options.pagesize = pageSize;
@@ -628,32 +628,36 @@ syQuery.add("page", function(P){
 							type : 1,
 							callback : function(rs)
 							{
-								var count = rs.recordcount, i = 1;
-								if ( options.pagesize > count ) options.pagesize = count;
-								var size = Math.ceil( count / options.pagesize );
-								if ( options.absolutePage > size ) options.absolutePage = size;
-								
-								rs.PageSize = options.pagesize;
-								rs.AbsolutePage = options.absolutePage;
-								
-								backstr.total = count;
-								backstr.pagesize = options.pagesize;
-								backstr.absolutePage = options.absolutePage;
-								backstr.pageCount = size;
-								
-								if ( backstr.pagesize < 0 ) backstr.pagesize = 0;
-								if ( backstr.absolutePage < 1 ) backstr.absolutePage = 1;
-								
-								while ( !rs.Eof &&  i <= rs.PageSize )
-								{
-									if ( options.callback != undefined ) options.callback.call(rs, rs, i);
-									i++;
-									rs.MoveNext();
-								}
+								backstr = _this.init( rs, options.absolutePage, options.pagesize, options.callback );
 							}
 						}
 					]
 				});	
+			}
+			else if ( $.isObject(options) )
+			{
+				var count = options.recordcount, i = 1;
+				if ( pageSize > count ) pageSize = count;
+				var size = Math.ceil( count / pageSize );
+				if ( absolutePage > size ) absolutePage = size;
+				
+				options.PageSize = pageSize;
+				options.AbsolutePage = absolutePage;
+				
+				backstr.total = count;
+				backstr.pagesize = pageSize;
+				backstr.absolutePage = absolutePage;
+				backstr.pageCount = size;
+				
+				if ( backstr.pagesize < 0 ) backstr.pagesize = 0;
+				if ( backstr.absolutePage < 1 ) backstr.absolutePage = 1;
+				
+				while ( !options.Eof &&  i <= options.PageSize )
+				{
+					if ( callback != undefined ) callback.call(options, options, i);
+					i++;
+					options.MoveNext();
+				}
 			}
 			
 			// 返回数据
@@ -663,6 +667,7 @@ syQuery.add("page", function(P){
 		
 		pagebar : function( total, pageSize, absolutePage, pageCount )
 		{
+			if ( pageCount == undefined ) pageCount = Math.ceil(total / pageSize);
 			var l_cur = absolutePage, r_cur = absolutePage, space = 0;
 			while ( (l_cur > 1) && (r_cur < pageCount) && ((absolutePage - l_cur) < 4) )
 			{
