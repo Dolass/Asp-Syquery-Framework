@@ -71,7 +71,13 @@
 		}
 		
 		_Query.config.method.retMake_object = function( selector, object ){
+			var s ;
+			try{ selector.constructor; s = true; }catch(e){ s = false; }
 			if ( selector == undefined ){
+				return this;
+			}else if ( !s ){
+				push.call(this, selector);
+				this.object = object || null;
 				return this;
 			}else if ( typeof selector.length === "number"  )
 			{
