@@ -324,10 +324,10 @@ syQuery.add("application", function(A){
 			
 			if ( value != null ){
 				if ( object.isapp ){
-					if (_app == true) this._write_app(object, value);
+					this._write_app(object, value);
 				}
 				if ( object.isfile ){
-					if ( _file != true ) this._write_file(object, value);
+					this._write_file(object, value);
 				}
 			}
 		},
