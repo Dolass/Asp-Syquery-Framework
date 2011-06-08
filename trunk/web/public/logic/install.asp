@@ -30,7 +30,11 @@ API.run(function(){
 					_cache.write(cache.module);
 				});
 				module.move(_fo);
-				$.echo($.makeJson({ success : true, message : "插件安装成功。" }));
+				if ( xmlConfig.go != undefined && xmlConfig.go.length > 0 ){
+					$.echo($.makeJson({ success : true, message : "插件安装成功。", go : [_fo, xmlConfig.go] }));
+				}else{
+					$.echo($.makeJson({ success : true, message : "插件安装成功。" }));
+				}
 			}
 			API.use("db-close", [connConfig.object]);
 		}else{

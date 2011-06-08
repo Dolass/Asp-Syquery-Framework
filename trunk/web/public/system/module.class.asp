@@ -26,7 +26,8 @@
 				istitle : "",
 				root : "",
 				author : "",
-				url : ""
+				url : "",
+				go : ""
 			}
 			
 			// 配置文件是否存在	
@@ -45,6 +46,7 @@
 					xmlSetting.root = $(XO, AO).find("root").text() || "";
 					xmlSetting.author = $(XO, AO).find("author").text() || "";
 					xmlSetting.url = $(XO, AO).find("url").text() || "";
+					xmlSetting.go = $(XO, AO).find("go").text() || "";
 					xmlSetting.success = true;
 					
 					//this.xmlRoot = XO;
