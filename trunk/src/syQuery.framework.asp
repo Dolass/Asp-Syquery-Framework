@@ -385,7 +385,6 @@ syQuery.add("application", function(A){
 				temp1.push(items);
 			}
 			temp1 = "[" + temp1.join(",") + "]";
-			$.echo(this.root + "/" + object.path)
 			$(temp1, $.stream()).save(this.root + "/" + object.path, 2);
 		}
 		
