@@ -6,6 +6,6 @@ var oAuth = new syQuery.oAuth(),
 	oAuth_sign = oAuth.sign(),
 	oAuth_url = oAuth.queryURL;
 	if ( oAuth.getSecret(oAuth_url) ){
-		oAuth.redirect();
+		oAuth.redirect("http://www.54bq.com/callback.asp");
 	}
 %>
