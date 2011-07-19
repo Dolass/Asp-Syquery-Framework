@@ -893,6 +893,28 @@
 					return null;
 				}
 			});
+		},
+		
+		unicode : function(s){
+			var rs = "";
+				 
+			for( var i = 0 ; i < s.length ; i++ )
+			{ 
+				rs += "&#" + s.charCodeAt(i) + ";" ; 
+			} 
+			
+			return rs;
+		},
+		
+		reUnicode : function(s){
+			var k = s.split(";"), r = ""; 
+			
+			for( var x = 0 ; x < k.length ; x++ )
+			{ 
+				r += String.fromCharCode( k[x].replace(/&#/,"") ); 
+			} 
+			
+			return r; 
 		}
 	});
 	
