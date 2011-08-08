@@ -15,7 +15,7 @@ var $ = (function(){
  	  *	@ param QueryRoot 	<object> 
  	  *	@ return <syQuery object>
 	 */
-	var limitedKey = ["config", "ready", "error", "root", "charset", "createQuery", "merge", "mix", "augment", "type", "echo", "fn", "die", "isFunction", "isString", "isArray", "isObject", "isBoolean", "isNumber", "isDate", "isJson", "isQuery", "include", "add", "use", "execute"];
+	var limitedKey = ["config", "ready", "error", "root", "charset", "createQuery", "merge", "mix", "augment", "type", "echo", "fn", "die", "isFunction", "isString", "isArray", "isObject", "isBoolean", "isNumber", "isDate", "isJson", "isQuery", "include", "add", "use", "execute", "query", "querys", "posts", "post", "Enumerator", "parseJSON", "getIP"];
 	var _Query = function( key, fn ){
 		if ( _Query.isString( key ) ){
 			if ( limitedKey.indexOf(key) == -1 )
@@ -912,4 +912,83 @@ $.config.type.each(function( i, k ){
 	});
 	
 })();
+
+/**
+ * @ 日期处理类
+ */
+$.add("date", function(){
+	// 固定对象形式
+	var date = function(){
+		
+	}
+	
+	// 扩展原型
+	$.mix(date, {
+		/**
+		 * @ 当前日期处理方法
+		 * @ param t <string> 日期形式
+		 * @ return string
+		 */
+		now : function(t){
+			return DateFormat(new Date(), t);
+		},
+		
+		/**
+		 * @ 转化日期为date格式
+		 * @ param value <string> 日期形式
+		 * @ return <date>
+		 */
+		parseDate : parseDate,
+		
+		/**
+		 * @ 任意日期转化方法
+		 * @ param date 日期
+		 * @ param type <string> 日期形式
+		 * @ return <string>
+		 */
+		dateStr : DateFormat
+	});
+	
+	// 私有方法
+	function DateFormat(date, type){
+		if ( type == undefined ) type = "Y/m/d H:I:S";
+		if ( $.isString(date) || $.isNumber(date) ) date = new Date(date);
+		var data = format(date), tmpStr = "", _tmpStr;
+		
+		for ( var i = 0 ; i < type.length ; i++ )
+		{
+			_tmpStr = type.charAt(i);
+			
+			if ( data[_tmpStr] == undefined ){
+				tmpStr += _tmpStr;
+			}else{
+				tmpStr += data[_tmpStr];
+			}
+		}
+		
+		return tmpStr;
+	}
+	
+	function parseDate(value){
+		var date = Date.parse(value);
+		return isNaN(date) ? -1 : Number(date);
+	}
+	
+	function format(date){
+		return {
+			d : (date.getDate() < 10 ? '0' : '') + date.getDate(),
+			m : (date.getMonth() < 9 ? '0' : '') + (date.getMonth() + 1),
+			Y : date.getFullYear(),
+			y : ('' + date.getFullYear()).substr(2),
+			a : date.getHours() < 12 ? 'am' : 'pm',
+			A : date.getHours() < 12 ? 'AM' : 'PM',
+			H : (date.getHours() < 10 ? '0' : '') + date.getHours(),
+			I : (date.getMinutes() < 10 ? '0' : '') + date.getMinutes(),
+			S : (date.getSeconds() < 10 ? '0' : '') + date.getSeconds(),
+			z : date.getTime()
+		}
+	}
+	
+	return date;
+});
 %>

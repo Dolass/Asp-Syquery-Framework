@@ -20,14 +20,13 @@ $.add("evio", function(){
 	return form;
 });
 
-$.execute("evio", function(H){
-	var t = $("test");
-	
-	
-	var x = '{ "a" : 1, "b" : 2 }';
-	x = $.parseJSON(x);
-	$.echo(x.b);
-	
+$.execute("date", function(DATE){
+	$.echo(DATE.now("z"))
+//	var date = new DATE();
+//	for ( var i in date )
+//	{
+//		$.echo( i + " : " + date[i] + "<br />" );
+//	}
 });
 
 %>
