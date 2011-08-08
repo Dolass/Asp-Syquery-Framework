@@ -21,12 +21,13 @@ $.add("evio", function(){
 });
 
 $.execute("evio", function(H){
-	var x = new H();
-
-	for ( var i in x ){
-		$.echo( i + " : " + x[i] + "<br />" );
-	}
-
+	var t = $("test");
+	
+	
+	var x = '{ "a" : 1, "b" : 2 }';
+	x = $.parseJSON(x);
+	$.echo(x.b);
+	
 });
 
 %>
