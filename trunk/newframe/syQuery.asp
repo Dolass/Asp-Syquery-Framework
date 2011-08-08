@@ -15,7 +15,7 @@ var $ = (function(){
  	  *	@ param QueryRoot 	<object> 
  	  *	@ return <syQuery object>
 	 */
-	var limitedKey = ["config", "ready", "error", "root", "charset", "createQuery", "merge", "mix", "augment", "type", "echo", "fn", "die", "isFunction", "isString", "isArray", "isObject", "isBoolean", "isNumber", "isDate", "isJson", "isQuery", "include", "add"];
+	var limitedKey = ["config", "ready", "error", "root", "charset", "createQuery", "merge", "mix", "augment", "type", "echo", "fn", "die", "isFunction", "isString", "isArray", "isObject", "isBoolean", "isNumber", "isDate", "isJson", "isQuery", "include", "add", "use", "execute"];
 	var _Query = function( key, fn ){
 		if ( _Query.isString( key ) ){
 			if ( limitedKey.indexOf(key) == -1 )
@@ -61,7 +61,7 @@ var $ = (function(){
 	_Query.root = ""; // 框架运行物理地址相对于根地址偏移的位置
 	_Query.charset = "utf-8"; // 框架编码
 	_Query.plugin = "newframe"; // 相对于网站跟目录的地址，不带/ （只填文件夹）
-	_Query.load = []; // 系统已经加载的其他模块名
+	_Query.loaded = []; // 系统已经加载的其他模块名
 	
 	// syQuery 对象构造函数
 	_Query.fn = _Query.prototype = {
@@ -337,6 +337,13 @@ $.augment( Array, {
 		ret.length = i;
 		ret.object = context || null;
 		return ret;
+	},
+	
+	// 数组去除两端空格
+	trim : function(){
+		return this.map(function( i, k ){
+			return k.trim();
+		});
 	}
 } );
 
@@ -487,9 +494,21 @@ $.config.type.each(function( i, k ){
 	
 	$.root = getLocalPath(); // 本框架相当于于网站根目录的上级位置集合字符串。
 	
-})();(function(){
+})();
+
+(function(){
 	
+	/**
+	 * @ 需要配置$.plugin路径
+	 */
 	$.mix($, {
+		/**
+		 * @为框架添加新的模块
+		 * @param key <string> 模块名称 标识
+		 * @param fn <function> 详细回调方法
+		 * @param eqment <json> 配置参数
+		 * @return new function
+		 */
 		add : function(key, fn, eqment){
 			if ( $[key] == undefined ){
 				dealEqMent(eqment); // 尝试加载前置环境
@@ -500,8 +519,53 @@ $.config.type.each(function( i, k ){
 			}
 		},
 		
-		use : function(){
+		/**
+		 * @运行框架模块
+		 * @param key <string> 模块名称 标识
+		 * @param fn <function> 详细回调方法 其中第一个参数为该模块的返回值
+		 * @return anyObject
+		 */
+		use : function( key, fn ){
+			if ( $[key] != undefined ){
+				return fn( $[key]() );
+			}
+		},
+		
+		/**
+		 * @页面执行函数
+		 * @param key <string> 模块名称 标识
+		 * @param fn <function> 详细回调方法 参数为这些模块的返回值
+		 * @return anyObject
+		 */
+		execute : function( key, fn ){
+			if ( $.isFunction(key) ){
+				fn = key;
+				key = "";
+			}
 			
+			var tmpArr = [];
+			key.split(",").each(function( i, k ){
+				tmpArr.push($[k.trim()]);
+			});
+
+			fn.apply(undefined, tmpArr);
+		},
+		
+		/**
+		 * @输出错误的方法
+		 * @param fn <string | undefined | string> 输出分割符
+		 * @return string
+		 */
+		echoError : function( fn ){
+			if ( $.isFunction(fn) ){
+				$.echo( $.error, function(){
+					return this.map(function( i, k ){
+						return fn(k);
+					}).join("");
+				} );
+			}else{
+				$.echo( $.error.join( fn == undefined ? "<br />" : fn ) );
+			}
 		}
 	});
 	
@@ -514,9 +578,9 @@ $.config.type.each(function( i, k ){
 				
 				for ( var i = 0 ; i < eq.reqiure.length ; i++ )
 				{
-					if ( $.load.indexOf(eq.reqiure[i]) == -1 ){
+					if ( $.loaded.indexOf(eq.reqiure[i]) == -1 ){
 						$.include(_p + eq.reqiure[i] + "-min.asp");
-						$.load.push(eq.reqiure[i]);
+						$.loaded.push(eq.reqiure[i]);
 					}
 				}
 			}

@@ -9,7 +9,7 @@
 //	$.echo(i + " : " + S[i] + "<br />");
 //}
 
-$.add("hj", function(){
+$.add("evio", function(){
 	var form = function(){
 		this.length = 1;
 	}
@@ -20,11 +20,13 @@ $.add("hj", function(){
 	return form;
 });
 
-var x = new $.hj();
+$.execute("evio", function(H){
+	var x = new H();
 
-for ( var i in x ){
-	$.echo( i + " : " + x[i] + "<br />" );
-}
+	for ( var i in x ){
+		$.echo( i + " : " + x[i] + "<br />" );
+	}
 
-//$.echo(Array.prototype.slice)
+});
+
 %>
