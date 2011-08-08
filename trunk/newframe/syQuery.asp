@@ -165,6 +165,17 @@ var $ = (function(){
 		return source;
 	}
 	
+	_Query.extend = _Query.fn.extend = function( source, target, args )
+	{
+		var _source = source || {}, _target = target || {}, _args = args || [];
+		if ( !target && !args )
+		{
+			_source = this;
+			_target = source;
+		}
+		return _Query.mix( _source, _target, true, _args );
+	}
+	
 	/**
 	  *	@ function <new function for extend>
  	  *	@ param r 	<object> target object
@@ -260,9 +271,160 @@ var $ = (function(){
  * return <String>
  */
 $.augment( String, {
+	// 普通去除两端空格
 	trim : function(){
 		return this.replace(/^\s+/, "").replace(/\s+$/, "");
+	},
+	// 字符串防SQL注入
+	sql : function(){
+		var _str = this;
+		[
+			[/(w)(here)/ig, "$1h&#101;re"],
+			[/(s)(elect)/ig, "$1el&#101;ct"],
+			[/(i)(nsert)/ig, "$1ns&#101;rt"],
+			[/(c)(reate)/ig, "$1r&#101;ate"],
+			[/(d)(rop)/ig, "$1ro&#112;"],
+			[/(a)(lter)/ig, "$1lt&#101;r"],
+			[/(d)(elete)/ig, "$1el&#101;te"],
+			[/(u)(pdate)/ig, "$1p&#100;ate"],
+			[/(\s)(or)/ig, "$1o&#114;"],
+			[/(java)(script)/ig, "$1scri&#112;t"],
+			[/(j)(script)/ig, "$1scri&#112;t"],
+			[/(vb)(script)/ig, "$1scri&#112;t"],
+			[/(expression)/ig, "e&#173;pression"],
+			[/(c)(ookie)/ig, "&#99;ookie"],
+			[/(Object)/ig, "&#79;bject"],
+			[/(script)/ig, "scri&#112;t"]
+		].each(function(i, k){
+			_str = _str.replace(k[0], k[1]);
+		});
+		
+		return _str;
+	},
+	
+	_sql : function(){
+		var _str = this;
+		[
+			[/(w)(h&#101;re)/ig, "$1here"],
+			[/(s)(el&#101;ct)/ig, "$1elect"],
+			[/(i)(ns&#101;rt)/ig, "$1nsert"],
+			[/(c)(r&#101;ate)/ig, "$1reate"],
+			[/(d)(ro&#112;)/ig, "$1rop"],
+			[/(a)(lt&#101;r)/ig, "$1lter"],
+			[/(d)(el&#101;te)/ig, "$1elete"],
+			[/(u)(p&#100;ate)/ig, "$1pdate"],
+			[/(\s)(o&#114;)/ig, "$1or"],
+			[/(java)(scri&#112;t)/ig, "$1script"],
+			[/(j)(scri&#112;t)/ig, "$1script"],
+			[/(vb)(scri&#112;t)/ig, "$1script"],
+			[/(e&#173;pression)/ig, "expression"],
+			[/&#99;(ookie)/ig, "c$1"],
+			[/&#79;(bject)/ig, "O$1"],
+			[/(scri)&#112;(t)/ig, "$1p$2"]
+		].each(function(i, k){
+			_str = _str.replace(k[0], k[1]);
+		});
+		
+		return _str;
+	},
+	
+	cStr : function(){
+		var _str = this;
+		[
+			[/\</g, "&#60;"],
+			[/\>/g, "&#62;"]
+		].each(function(i, k){
+			_str = _str.replace(k[0], k[1]);
+		});
+		
+		return _str;
+	},
+	
+	_cStr : function(){
+		var _str = this;
+		[
+			[/&#60;/g, "<"],
+			[/&#62;/g, ">"]
+		].each(function(i, k){
+			_str = _str.replace(k[0], k[1]);
+		});
+		
+		return _str;
+	},
+	
+	tStr : function(){
+		var _str = this;
+		[
+			[/textarea/ig, "t&#101;xtarea"]
+		].each(function(i, k){
+			_str = _str.replace(k[0], k[1]);
+		});
+		
+		return _str;
+	},
+	
+	_tStr : function(){
+		var _str = this;
+		[
+			[/t&#101;xtarea/ig, "textarea"]
+		].each(function(i, k){
+			_str = _str.replace(k[0], k[1]);
+		});
+		
+		return _str;
+	},
+	
+	// 截取字符串前 n 个字符 区分中英文 1中文 = 2英文  以中文为基准
+	cut : function( n ){
+		var j = 0, temp = "", self = this, _value;
+		
+		for ( var i = 0 ; i < self.length ; i++ )
+		{
+			_value = self.charAt(i);
+			
+			if ( !/[^\u4E00-\u9FA5]/g.test(_value) ){
+				j = j + 2;
+			}else{
+				j = j + 1;
+			}
+			
+			temp += _value;
+			if ( j >= (2 * n) ){ break; }
+		}
+		
+		if ( temp != self ){ temp += "..." }
+		
+		return temp;
+	},
+	
+	removeHTML : function(){ return this.replace(/<[^>]*?>/g, "").replace(/\n\t\r/g, ""); },	
+	removeUBB : function(){ return this.replace(/\[(\w+).*?\](.+)\[\/\1\]/g, "$2").replace(/\n\t\r/g, ""); },	
+	left : function(i){ return this.substr(0, i); },	
+	right : function(i){ return this.substr(this.length - i, i); },	
+	mid : function(i, t){ return this.substr(i - 1, t); },
+	
+	unicode : function(){
+		var rs = "", self = this;
+			 
+		for( var i = 0 ; i < self.length ; i++ )
+		{ 
+			rs += "&#" + self.charCodeAt(i) + ";" ; 
+		} 
+		
+		return rs;
+	},
+	
+	_unicode : function(){
+		var self = this; k = self.split(";"), r = ""; 
+		
+		for( var x = 0 ; x < k.length ; x++ )
+		{ 
+			r += String.fromCharCode( k[x].replace( /&#/, "" ) ); 
+		} 
+		
+		return r; 
 	}
+	
 } );
 
 /**
@@ -271,6 +433,13 @@ $.augment( String, {
  * return <Array>
  */
 $.augment( Array, {
+	// 取第几个
+	// slice(a, b) a 从第几个数开始取值 （起始0） b 取数量、长度
+	eq : function(i){
+		return i === -1 ?
+			   this.slice( i ) :
+			   this.slice( i, +i + 1 );
+	},
 	
 	// 数组遍历循环的方法
 	each : function(callback, args){
@@ -325,6 +494,23 @@ $.augment( Array, {
 		return j;
 	},
 	
+	lastIndexOf : function( value ){
+		var len = this.length, 
+			self = this, 
+			_self = self.reverse(),
+			num = _self.indexOf( value );
+			
+		if ( num == -1 ){
+			return -1;
+		}else{
+			return len - num - 1;
+		}
+	},
+	
+	first : function(){ return this.eq(0); },
+	last : function(){ return this.eq(-1); },
+	remove : function(i){ return this.slice( 0, i ).concat( this.slice(i + 1) ); },
+	
 	// 形成syQuery对象主方法
 	toQuery : function( ret, context ){
 		var i = ret.length, j = 0, selector = this;
@@ -346,6 +532,34 @@ $.augment( Array, {
 		});
 	}
 } );
+
+/**
+ * json prototype method
+ * useing json.medthod <function>
+ * return <Array>
+ */
+$.augment( Object, {
+	// 删除JSON中某个属性
+	remove : function( k ){
+		if ( $.isArray(k) ){
+			for ( var i = 0 ; i < k.length ; i++ ){ delete this[k[i]]; }
+		}else{
+			delete this[k];
+		}
+		
+		return this;
+	},
+	
+	// 添加修改JSON属性
+	update : function(key, value){
+		if ( value == undefined ){
+			return $.mix(this, key);
+		}else{
+			this[key] = value;
+			return this;
+		}
+	}
+});
 
 // 创建每个 is前缀的判断数据类型的方法
 $.config.type = ["Function", "String", "Array", "Object", "Boolean", "Number"];
@@ -537,11 +751,13 @@ $.config.type.each(function( i, k ){
 		 * @param fn <function> 详细回调方法 参数为这些模块的返回值
 		 * @return anyObject
 		 */
-		execute : function( key, fn ){
+		execute : function( key, fn, eqment ){
 			if ( $.isFunction(key) ){
 				fn = key;
 				key = "";
 			}
+			
+			dealEqMent(eqment); // 尝试加载前置环境
 			
 			var tmpArr = [];
 			key.split(",").each(function( i, k ){
@@ -586,6 +802,114 @@ $.config.type.each(function( i, k ){
 			}
 		}
 	}
+	
+})();
+
+(function(){
+	var array = Array.prototype,
+		rvalidchars = /^[\],:{}\s]*$/,
+		rvalidescape = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,
+		rvalidtokens = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
+		rvalidbraces = /(?:^|:|,)(?:\s*\[)+/g;
+	
+	$.fn.extend({
+		toArray : function(){ return array.slice.call( this, 0 ); },
+		slice : function(){ return array.slice.apply(this, arguments); },
+		eq : function(i){ return i === -1 ? this.slice( i ) : this.slice( i, +i + 1 ); },
+		each : function(fn){ return array.each.call(this, fn); },
+		map : function(fn){ return array.toQuery.call(array.map.call(this, fn), $.fn, this.object); },
+		first : function(){ return this.eq(0); },
+		last : function(){ return this.eq(-1); },
+		get : function(num){ return num == undefined ? this.toArray() : ( num < 0 ? this.slice(num)[ 0 ] : this[ num ] ); },
+		trim : function(){ return array.trim.call(this); }
+	});
+	
+	$.extend({
+		// 对象枚举
+		Enumerator : function( t, ret, callback ){
+			var _data, _ret, _callback;
+			
+			if ( ret == undefined ){
+				_data = t; _ret = []; _callback = undefined;
+			}else if ( callback == undefined ){
+				_data = t;
+				if ( $.isFunction(ret) ){ callback = ret; ret = []; }
+				else if ( $.isArray( ret ) ) { callback = undefined; }
+				else{ ret = []; callback = undefined; }
+			}else{
+				_data = t; _ret = ret; _callback = callback;
+			}
+			
+			try{
+				_data = new Enumerator(_data);
+				for (; !_data.atEnd() ; _data.moveNext() ) {
+					if ( $.isFunction(_callback) ){
+						_ret.push(_callback.call(_data, _data.item()));
+					}else{
+						_ret.push(_data.item());
+					}
+				}
+			}catch(e){}
+			
+			return _ret;
+		},
+		
+		// QueryString 获取参数方法 集合
+		querys : function(key, callback){
+			if ( key == undefined ){
+				return this.Enumerator(Request.QueryString, callback);
+			}else{
+				return this.Enumerator(Request.QueryString(key), callback);
+			}
+		},
+		
+		// QueryString 获取参数方法 单一
+		query : function(){
+			return this.querys.apply(this, arguments)[0];
+		},
+		
+		// Form 获取参数方法 集合
+		posts : function(key, callback){
+			if ( key == undefined ){
+				return this.Enumerator(Request.Form, callback);
+			}else{
+				return this.Enumerator(Request.Form(key), callback);
+			}
+		},
+		
+		// Form 获取参数方法 单一
+		post : function(){
+			return this.posts.apply(this, arguments)[0];
+		},
+		
+		parseJSON : function(data){
+			if ( data == undefined || !$.isString(data) ) {
+				return null;
+			}
+	
+			// Make sure leading/trailing whitespace is removed (IE can't handle it)
+			data = data.trim();
+	
+			// Make sure the incoming data is actual JSON
+			// Logic borrowed from http://json.org/json2.js
+			if ( rvalidchars.test(data.replace(rvalidescape, "@")
+				.replace(rvalidtokens, "]")
+				.replace(rvalidbraces, "")) ) {
+	
+				// Try to use the native JSON parser first
+				return (new Function("return " + data))();
+	
+			} else {
+				$.error.push( "Invalid JSON: " + data );
+			}
+		},
+		
+		getIP : function(){
+			var userip = String(Request.ServerVariables("HTTP_X_FORWARDED_FOR")).toLowerCase();
+			if ( userip == "undefined" ) userip = String(Request.ServerVariables("REMOTE_ADDR")).toLowerCase();
+			return userip;
+		}
+	});
 	
 })();
 %>
