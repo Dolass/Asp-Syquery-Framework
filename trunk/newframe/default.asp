@@ -20,13 +20,18 @@ $.add("evio", function(){
 	return form;
 });
 
-$.execute("date", function(DATE){
-	$.echo(DATE.now("z"))
-//	var date = new DATE();
-//	for ( var i in date )
+$.execute("date, session, cookie", function(D, S, C){
+
+	var Cookie = new C();
+	Cookie.init("key").set("123").keep("day(3)");
+
+//	for ( var i in l )
 //	{
-//		$.echo( i + " : " + date[i] + "<br />" );
+//		$.echo( i + " : " + Cookie[i] + "<br />" );
 //	}
 });
 
 %>
+<script>
+document.write(unescape(document.cookie))
+</script>
