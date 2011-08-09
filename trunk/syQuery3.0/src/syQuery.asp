@@ -60,7 +60,7 @@ var $ = (function(){
 	_Query.error = []; // 框架全局错误绑定代码列表
 	_Query.root = ""; // 框架运行物理地址相对于根地址偏移的位置
 	_Query.charset = "utf-8"; // 框架编码
-	_Query.plugin = "newframe"; // 相对于网站跟目录的地址，不带/ （只填文件夹）
+	_Query.plugin = "syQuery3.0/src"; // 相对于网站跟目录的地址，不带/ （只填文件夹）
 	_Query.loaded = []; // 系统已经加载的其他模块名
 	
 	// syQuery 对象构造函数
