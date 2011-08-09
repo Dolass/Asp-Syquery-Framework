@@ -1,0 +1,191 @@
+﻿<codehints xmlns:MMString="http://www.macromedia.com/schemes/data/string/">
+	<menugroup MMString:name="codehints_syQuery" id="CodeHints_syQuery" name="syQuery 2.0 Code Hints" enabled="true">
+	  <description>
+		  <![CDATA[ 
+			syBlog.net
+			]]>
+	  </description>
+	  
+		<!-- API/2.0/  JSCript -->
+		<menu pattern="$" additionaldismisschars=";:" allowwhitespaceprefix="true" source="ASP">	
+			<menuitem label="(selector)" value="(selector)" icon="shared/syQuery.png" />
+			<menuitem label="(selector, object)" value="(selector, object)" icon="shared/syQuery.png" />
+		</menu>
+		
+		<menu pattern=")" additionaldismisschars="();:" allowwhitespaceprefix="true" source="ASP">	
+			<menuitem label=".size()" icon="shared/syQuery.png" />
+			<menuitem label=".each(callback, args)" value=".each(callback, args)" icon="shared/syQuery.png" />
+			<menuitem label=".map(callback)" icon="shared/syQuery.png" />
+			<menuitem label=".trim()" icon="shared/syQuery.png" />
+			<menuitem label=".toArray()" icon="shared/syQuery.png" />
+			<menuitem label=".out(number)" icon="shared/syQuery.png" />
+			<menuitem label=".echo()" icon="shared/syQuery.png" />
+			<menuitem label=".get(number)" icon="shared/syQuery.png" />
+			<menuitem label=".eq(number)" icon="shared/syQuery.png" />
+			<menuitem label=".slice()" icon="shared/syQuery.png" />
+			<menuitem label=".left(number)" icon="shared/syQuery.png" />
+			<menuitem label=".right(number)" icon="shared/syQuery.png" />
+			<menuitem label=".mid(number, length)" icon="shared/syQuery.png" />
+			<menuitem label=".instr(number)" icon="shared/syQuery.png" />
+			<menuitem label=".instrrev(number)" icon="shared/syQuery.png" />
+			<menuitem label=".first()" icon="shared/syQuery.png" />
+			<menuitem label=".last()" icon="shared/syQuery.png" />
+			<menuitem label=".parseDate()" icon="shared/syQuery.png" />
+			<menuitem label=".date(type)" icon="shared/syQuery.png" />
+			<menuitem label=".lcase()" icon="shared/syQuery.png" />
+			<menuitem label=".ucase()" icon="shared/syQuery.png" />
+			<menuitem label=".removeHTML()" icon="shared/syQuery.png" />
+			<menuitem label=".removeUBB()" icon="shared/syQuery.png" />
+			<menuitem label=".cutStr(number)" icon="shared/syQuery.png" />
+			<menuitem label=".split()" icon="shared/syQuery.png" />
+			<menuitem label=".replace()" icon="shared/syQuery.png" />
+			<menuitem label=".substr()" icon="shared/syQuery.png" />
+			<menuitem label=".indexOf()" icon="shared/syQuery.png" />
+			<menuitem label=".lastIndexOf()" icon="shared/syQuery.png" />
+			<menuitem label=".lastIndexOf()" icon="shared/syQuery.png" />
+			<menuitem label=".select(conn, rs)" value=".select(conn, rs)" icon="shared/syQuery.png" />
+			<menuitem label=".record(conn, options, rs)" value=".record(conn, options, rs)" icon="shared/syQuery.png" />
+			<menuitem label=".insert(conn, table, pKey, callback)" value=".insert(conn, table, pKey, callback)" icon="shared/syQuery.png" />
+			<menuitem label=".update(conn, table, pKey, pKeyValue, callback)" value=".update(conn, table, pKey, pKeyValue, callback)" icon="shared/syQuery.png" />
+			<menuitem label=".scrap(conn, table, pKey, pKeyValue, callback)" value=".scrap(conn, table, pKey, pKeyValue, callback)" icon="shared/syQuery.png" />
+			<menuitem label=".exsit(type)" icon="shared/syQuery.png" />
+			<menuitem label=".create()" icon="shared/syQuery.png" />
+			<menuitem label=".collect(folder, callback)" value=".collect(folder, callback)" icon="shared/syQuery.png" />
+			<menuitem label="._delete(type)" icon="shared/syQuery.png" />
+			<menuitem label="._deletes(type)" icon="shared/syQuery.png" />
+			<menuitem label=".move(folder, type)" value=".move(folder, type)" icon="shared/syQuery.png" />
+			<menuitem label=".moves(folder, type)" value=".moves(folder, type)" icon="shared/syQuery.png" />
+			<menuitem label=".copy(folder, type)" value=".copy(folder, type)" icon="shared/syQuery.png" />
+			<menuitem label=".copys(folder, type)" value=".copys(folder, type)" icon="shared/syQuery.png" />
+			<menuitem label=".name(newName, type)" value=".name(newName, type)" icon="shared/syQuery.png" />
+			<menuitem label=".filecreate()" icon="shared/syQuery.png" />
+			<menuitem label=".load(type)" icon="shared/syQuery.png" />
+			<menuitem label=".save(path, type)" value=".save(path, type)" icon="shared/syQuery.png" />
+			<menuitem label=".bin()" icon="shared/syQuery.png" />
+			<menuitem label=".find(selector)" icon="shared/syQuery.png" />
+			<menuitem label=".attrs(key, value)" value=".attrs(key, value)" icon="shared/syQuery.png" />
+			<menuitem label=".attr(key, value)" value=".attr(key, value)" icon="shared/syQuery.png" />
+			<menuitem label=".removeAttr(keyName)" icon="shared/syQuery.png" />
+			<menuitem label=".append(key, exec)" value=".append(key)" icon="shared/syQuery.png" />
+			<menuitem label=".empty()" icon="shared/syQuery.png" />
+			<menuitem label=".saveXML(path)" icon="shared/syQuery.png" />
+			<menuitem label=".html(htmlText)" icon="shared/syQuery.png" />
+			<menuitem label=".text(text)" icon="shared/syQuery.png" />
+			<menuitem label=".remove()" icon="shared/syQuery.png" />
+			<menuitem label=".xsl(path)" icon="shared/syQuery.png" />
+			<menuitem label=".parent()" icon="shared/syQuery.png" />
+			<menuitem label=".parents(selector)" icon="shared/syQuery.png" />
+			<menuitem label=".next()" icon="shared/syQuery.png" />
+			<menuitem label=".prev()" icon="shared/syQuery.png" />
+		</menu>
+		
+		<menu pattern="$." additionaldismisschars="();:" allowwhitespaceprefix="true" source="ASP">	
+			<menuitem label="makeArray(selector, ret, object)" value="makeArray(selector, ret, object)" icon="shared/syQuery.png" />
+			<menuitem label="setError(message)" value="setError('')" icon="shared/syQuery.png" />
+			<menuitem label="getError(callback)" value="getError()" icon="shared/syQuery.png" />
+			<menuitem label="type(ret)" value="type()" icon="shared/syQuery.png" />
+			<menuitem label="arrEach(array, callback, args)" value="arrEach(array, callback, args)" icon="shared/syQuery.png" />
+			<menuitem label="jsonEach(json, callback, args)" value="jsonEach(json, callback, args)" icon="shared/syQuery.png" />
+			<menuitem label="each(data, callback, args)" value="each(data, callback, args)" icon="shared/syQuery.png" />	
+			<menuitem label="isFunction(data)" value="isFunction(data)" icon="shared/syQuery.png" />
+			<menuitem label="isString(data)" value="isString(data)" icon="shared/syQuery.png" />
+			<menuitem label="isArray(data)" value="isArray(data)" icon="shared/syQuery.png" />
+			<menuitem label="isObject(data)" value="isObject(data)" icon="shared/syQuery.png" />
+			<menuitem label="isBoolean(data)" value="isBoolean(data)" icon="shared/syQuery.png" />
+			<menuitem label="isUndefined(data)" value="isUndefined(data)" icon="shared/syQuery.png" />
+			<menuitem label="isNull(data)" value="isNull(data)" icon="shared/syQuery.png" />
+			<menuitem label="isNumber(data)" value="isNumber(data)" icon="shared/syQuery.png" />
+			<menuitem label="isDate(data)" value="isDate(data)" icon="shared/syQuery.png" />
+			<menuitem label="isDateTime(data)" value="isDateTime(data)" icon="shared/syQuery.png" />
+			<menuitem label="isJson(data)" value="isJson(data)" icon="shared/syQuery.png" />
+			<menuitem label="isQuery(data)" value="isQuery(data)" icon="shared/syQuery.png" />
+			<menuitem label="isNewFunction(data)" value="isNewFunction(data)" icon="shared/syQuery.png" />
+			<menuitem label="isEmObject(data)" value="isEmObject(data)" icon="shared/syQuery.png" />	
+			<menuitem label="echo(string, callback, args)" value="echo()" icon="shared/syQuery.png" />
+			<menuitem label="mix(source, target, over, args)" value="mix(source, target, true, args)" icon="shared/syQuery.png" />	
+			<menuitem label="extend(source, target, args)" value="extend(source, target, args)" icon="shared/syQuery.png" />
+			<menuitem label="fn.extend(source, target, args)" value="fn.extend({})" icon="shared/syQuery.png" />
+			<menuitem label="merge(ret, selector, object)" value="merge(ret, selector, object)" icon="shared/syQuery.png" />
+			<menuitem label="trim()" value="trim()" icon="shared/syQuery.png" />
+			<menuitem label="out(array, i)" value="out(array, i)" icon="shared/syQuery.png" />
+			<menuitem label="Enumerator(object, ret, callback)" value="Enumerator(object, ret, callback)" icon="shared/syQuery.png" />
+			<menuitem label="querys(items, callback)" value="querys(items, callback)" icon="shared/syQuery.png" />
+			<menuitem label="posts(items, callback)" value="posts(items, callback)" icon="shared/syQuery.png" />
+			<menuitem label="posts(items, callback)" value="posts(items, callback)" icon="shared/syQuery.png" />
+			<menuitem label="query(item, callback)" value="query(item, callback)" icon="shared/syQuery.png" />
+			<menuitem label="post(item, callback)" value="post(item, callback)" icon="shared/syQuery.png" />
+			<menuitem label="map(item, callback)" value="map(item, callback)" icon="shared/syQuery.png" />
+			<menuitem label="grep(data, callback, inv)" value="grep(data, callback, inv)" icon="shared/syQuery.png" />
+			<menuitem label="inArray(array, array)" value="inArray(array, array)" icon="shared/syQuery.png" />
+			<menuitem label="parseDate(date)" value="parseDate(date)" icon="shared/syQuery.png" />
+			<menuitem label="date(date, type)" value="date(date, type)" icon="shared/syQuery.png" />
+			<menuitem label="now(type)" value="now(type)" icon="shared/syQuery.png" />
+			<menuitem label="parseJSON(string)" value="parseJSON(string)" icon="shared/syQuery.png" />
+			<menuitem label="getSession(key)" value="getSession(key)" icon="shared/syQuery.png" />
+			<menuitem label="setSession(key, value)" value="setSession(key, value)" icon="shared/syQuery.png" />
+			<menuitem label="session(key, value)" value="session(key, value)" icon="shared/syQuery.png" />
+			<menuitem label="removeSession(key)" value="removeSession(key)" icon="shared/syQuery.png" />
+			<menuitem label="getCookie(key)" value="getCookie(key)" icon="shared/syQuery.png" />
+			<menuitem label="setCookie(key, value, expr, domain)" value="setCookie(key, value, expr, domain)" icon="shared/syQuery.png" />
+			<menuitem label="cookie(key, value, expr, domain)" value="cookie(key, value, expr, domain)" icon="shared/syQuery.png" />
+			<menuitem label="removeCookie(key)" value="removeCookie(key)" icon="shared/syQuery.png" />
+			<menuitem label="makeJson(key, value)" value="makeJson(key, value)" icon="shared/syQuery.png" />
+			<menuitem label="toArray(data)" value="toArray(data)" icon="shared/syQuery.png" />
+			<menuitem label="getIP()" value="getIP()" icon="shared/syQuery.png" />
+			<menuitem label="active(objectName)" value="active(objectName)" icon="shared/syQuery.png" />
+			<menuitem label="param(data)" value="param(data)" icon="shared/syQuery.png" />		
+			<menuitem label="conn()" value="conn()" icon="shared/syQuery.png" />
+			<menuitem label="open(options, conn)" value="open(options, conn)" icon="shared/syQuery.png" />
+			<menuitem label="msProtect(conn, options)" value="msProtect(conn, options)" icon="shared/syQuery.png" />
+			<menuitem label="record(options)" value="record({})" icon="shared/syQuery.png" />
+			<menuitem label="rows(rs)" value="rows(rs)" icon="shared/syQuery.png" />
+			<menuitem label="formatpath(path)" value="formatpath(path)" icon="shared/syQuery.png" />
+			<menuitem label="DFT(type)" value="DFT(type)" icon="shared/syQuery.png" />
+			<menuitem label="fso()" icon="shared/syQuery.png" />
+			<menuitem label="create(path, fsoObject)" value="create(path, fsoObject)" icon="shared/syQuery.png" />
+			<menuitem label="name(path, fsoObject)" value="name(path, fsoObject)" icon="shared/syQuery.png" />
+			<menuitem label="stream()" icon="shared/syQuery.png" />
+			<menuitem label="loader(streamObject, type, callback, args)" value="loader(streamObject, type, callback, args)" icon="shared/syQuery.png" />
+			<menuitem label="load(path, streamObject, type)" value="load(path, streamObject, type)" icon="shared/syQuery.png" />
+			<menuitem label="save(data, path, streamObject, type)" value="save(data, path, streamObject, type)" icon="shared/syQuery.png" />
+			<menuitem label="bin(data, streamObject)" value="bin(data, streamObject)" icon="shared/syQuery.png" />
+			<menuitem label="xmlhttp()" icon="shared/syQuery.png" />
+			<menuitem label="ajax(options, xhr)" value="ajax(options, xhr)" icon="shared/syQuery.png" />
+			<menuitem label="send(url, options)" value="send(url, options)" icon="shared/syQuery.png" />
+			<menuitem label="ajaxGet(url, data, fn, options)" value="ajaxGet(url, data, fn, options)" icon="shared/syQuery.png" />
+			<menuitem label="ajaxPost(url, data, fn, options)" value="ajaxPost(url, data, fn, options)" icon="shared/syQuery.png" />
+			<menuitem label="ajaxGetJson(url, data, fn)" value="ajaxGetJson(url, data, fn)" icon="shared/syQuery.png" />
+			<menuitem label="ajaxPostJson(url, data, fn)" value="ajaxPostJson(url, data, fn)" icon="shared/syQuery.png" />
+			<menuitem label="winhttp()" icon="shared/syQuery.png" />
+			<menuitem label="win(options, whr)" value="win(options, whr)" icon="shared/syQuery.png" />
+			<menuitem label="winGet(url, data, fn, options)" value="winGet(url, data, fn, options)" icon="shared/syQuery.png" />
+			<menuitem label="winPost(url, data, fn, options)" value="winPost(url, data, fn, options)" icon="shared/syQuery.png" />
+			<menuitem label="xml([path || xmlString])" value="xml()" icon="shared/syQuery.png" />
+			<menuitem label="attr(elements, key, value)" value="attr(elements, key, value)" icon="shared/syQuery.png" />
+			<menuitem label="append(elem, name, obj, exec)" value="append(elem, name, obj, exec)" icon="shared/syQuery.png" />
+			<menuitem label="upload(options)" icon="shared/syQuery.png" />
+		</menu>
+		
+		<menu pattern=":" additionaldismisschars=";.()" allowwhitespaceprefix="true" source="ASP">	
+			<menuitem label="first" icon="shared/syQuery.png" />
+			<menuitem label="last" icon="shared/syQuery.png" />
+			<menuitem label="not" icon="shared/syQuery.png" />
+			<menuitem label="even" icon="shared/syQuery.png" />
+			<menuitem label="odd" icon="shared/syQuery.png" />
+			<menuitem label="eq" icon="shared/syQuery.png" />
+			<menuitem label="gt" icon="shared/syQuery.png" />
+			<menuitem label="lt" icon="shared/syQuery.png" />
+			<menuitem label="nth(xn + y)" icon="shared/syQuery.png" />
+		<!-- Selectors: Child Filters -->
+			<menuitem label="nth-child(xn + y)" icon="shared/syQuery.png" />
+			<menuitem label="first-child" icon="shared/syQuery.png" />
+			<menuitem label="last-child" icon="shared/syQuery.png" />
+		</menu>
+		
+		<menu pattern="[" additionaldismisschars=";.()" allowwhitespaceprefix="true" source="ASP">	
+			<menuitem label="[attribute=value]" value="attribute=value]" icon="shared/syQuery.png" />
+			<menuitem label="[attr1][attr2][attrN]" value="attr1][attr2][attrN]" icon="shared/syQuery.png" />		
+		</menu>
+
+	</menugroup>
+</codehints>
