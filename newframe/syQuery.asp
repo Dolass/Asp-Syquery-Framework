@@ -244,16 +244,6 @@ var $ = (function(){
 		Response.End();
 	}
 	
-//	_jsonConstructor.prototype.each = function(callback, args){
-//		var i, json = this;
-//		if ( args == undefined ){
-//			for ( i in json ) { if ( callback.call( json[ i ], i, json[ i ] ) === false ) { break; } }
-//		}else{
-//			for ( i in json ) { if ( callback.apply( json[ i ], args ) === false ) { break; } }
-//		}
-//		return json;
-//	}
-	
 	var _mix = function( p, r, s, ov ){
 		if (ov || !(p in r)) {
 			r[p] = s[p];
