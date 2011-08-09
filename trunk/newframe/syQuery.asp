@@ -1197,9 +1197,9 @@ $.add("cookie", function(){
 		},
 		
 		/**
-		 * @ COOKIE的生存时间
+		 * @ COOKIE的domain属性
 		 * @ param key <string | array | undefined> 标识
-		 * @ param value <string> 时间选择器 year(n), month(n), day(n), hour(n), minute(n), second(n), mSecond(n)
+		 * @ param value <string> 值
 		 * @ return null
 		 */
 		domain : function(key, value){
