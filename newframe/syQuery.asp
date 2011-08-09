@@ -741,7 +741,7 @@ $.config.type.each(function( i, k ){
 		 */
 		use : function( key, fn ){
 			if ( $[key] != undefined ){
-				return fn( $[key]() );
+				return fn( $[key] );
 			}
 		},
 		
@@ -918,9 +918,7 @@ $.config.type.each(function( i, k ){
  */
 $.add("date", function(){
 	// 固定对象形式
-	var date = function(){
-		
-	}
+	var date = function(){}
 	
 	// 扩展原型
 	$.mix(date, {
@@ -946,10 +944,26 @@ $.add("date", function(){
 		 * @ param type <string> 日期形式
 		 * @ return <string>
 		 */
-		dateStr : DateFormat
+		dateStr : DateFormat,
+		
+		/**
+		 * @ 计算2个时间之间的天数、小时、分钟、秒、毫秒
+		 * @ param A 日期1
+		 * @ param B 日期2
+		 * @ return <string>
+		 */
+		diff : function(A, B){
+			A = new Date(A).getTime();
+			B = new Date(B).getTime();
+			
+			var _max = Math.max(A, B), _min = Math.min(A, B), _diff = _max - _min;
+			
+			return diffDateTime(_diff);
+		}
 	});
 	
 	// 私有方法
+	// 格式化日期格式
 	function DateFormat(date, type){
 		if ( type == undefined ) type = "Y/m/d H:I:S";
 		if ( $.isString(date) || $.isNumber(date) ) date = new Date(date);
@@ -969,12 +983,21 @@ $.add("date", function(){
 		return tmpStr;
 	}
 	
+	// 压缩日期为时间戳
 	function parseDate(value){
 		var date = Date.parse(value);
 		return isNaN(date) ? -1 : Number(date);
 	}
 	
+	// 当前目标日期的各种属性
 	function format(date){
+		var D = {
+			shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+			longMonths: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+			shortDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+			longDays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+		}
+		
 		return {
 			d : (date.getDate() < 10 ? '0' : '') + date.getDate(),
 			m : (date.getMonth() < 9 ? '0' : '') + (date.getMonth() + 1),
@@ -985,10 +1008,264 @@ $.add("date", function(){
 			H : (date.getHours() < 10 ? '0' : '') + date.getHours(),
 			I : (date.getMinutes() < 10 ? '0' : '') + date.getMinutes(),
 			S : (date.getSeconds() < 10 ? '0' : '') + date.getSeconds(),
-			z : date.getTime()
+			z : date.getTime(),
+			w : D.shortDays[date.getDay()],
+			W : D.longDays[date.getDay()],
+			r : D.shortMonths[date.getMonth()],
+			R : D.longMonths[date.getMonth()]
 		}
 	}
 	
+	function diffDateTime( time ){
+		
+		if ( time === 0 ) return "0秒";
+		
+		var t1 = [86400000, 3600000, 60000, 1000],
+			t2 = ["天", "小时", "分钟", "秒"],
+			tmpStr = [0, 0, 0, 0];
+		
+		for ( var i = 0 ; i < t1.length ; i++ )
+		{
+			var gun = time / t1[i];
+			if ( gun < 1 ){
+				tmpStr[i] = 0;
+				time = gun * t1[i];
+			}else{
+				tmpStr[i] = Math.floor(gun);
+				time = time - tmpStr[i] * t1[i];
+			}
+		}
+		
+		tmpStr = tmpStr.map(function( i, k ){
+			return k == 0 ? "" : k + t2[i];
+		});
+		
+		return tmpStr.join("");
+	}
+	
 	return date;
+});
+
+/**
+ * @ session操作
+ */
+$.add("session", function(){
+	// 创建session原型
+	var _session = function(){}
+	
+	$.mix(_session, {
+		
+		/**
+		 * @ 获取一个标识为key的SESSION值
+		 * @ param key <string> 标识
+		 * @ param t <string | undefined> 默认值
+		 * @ return object
+		 */
+		get : function(key, t){
+			return Session(key) || t;
+		},
+		
+		/**
+		 * @ 设置一个或多个SESSION方法
+		 * @ param key <string | json> 标识 或者 序列化的JSON数据
+		 * @ param value <string | undefined> 值
+		 * @ return null
+		 */
+		set : function(key, value){
+			if ( value == undefined ){
+				for ( var i in key )
+				{
+					this.set( i, key[i] );
+				}
+			}else{
+				Session( key ) = value;
+			}
+		},
+		
+		/**
+		 * @ 移除一个或者多个SESSION标识
+		 * @ param key <string | array | undefined> 标识
+		 * @ return null
+		 */
+		remove : function(key){
+			var _this = this;
+			
+			if ( key == undefined ){
+				// 移除所有session
+				Session.Contents.RemoveAll();
+			}else if ( $.isArray(key) ){
+				key.each(function(i, k){
+					_this.remove(k);
+				});
+			}else{
+				Session.Contents.Remove(key);
+			}
+		}
+	});
+	
+	return _session;
+});
+
+/**
+ * @ cookie操作
+ */
+$.add("cookie", function(){
+	// 创建cookie原型
+	var cookie = function(){
+		this.length = 0;
+		this.object = 0;
+	}
+	
+	// 扩展原型
+	$.mix(cookie, {
+		/**
+		 * @ 获取一个标识为key的cookie值
+		 * @ param key <string> 标识
+		 * @ param t <string | undefined> 默认值
+		 * @ return object
+		 */
+		get : function(key, t){
+			var t = key.split("."), len = t.length;
+			
+			if ( len === 2 ){
+				return Request.Cookies(t[0])(t[1]) || t;
+			}else{
+				return Request.Cookies(t[0]) || t;
+			}
+		},
+		
+		/**
+		 * @ 设置一个或多个cookie方法
+		 * @ param key <string | json> 标识 或者 序列化的JSON数据
+		 * @ param value <string | undefined> 值
+		 * @ return null
+		 */
+		set : function(key, value){
+			if ( value == undefined ){
+				for ( var i in key )
+				{
+					this.set(i, key[i]);
+				}
+			}else{
+				var t = key.split("."), len = t.length;
+				
+				if ( len === 2 ){
+					return Response.Cookies(t[0])(t[1]) = value;
+				}else{
+					return Response.Cookies(t[0]) = value;
+				}
+			}
+		},
+		
+		/**
+		 * @ 移除一个或者多个cookie标识
+		 * @ param key <string | array | undefined> 标识
+		 * @ return null
+		 */
+		remove : function(key){
+			if ( $.isArray(key) ){
+				var _this = this;
+				key.each(function( i, k ){
+					_this.remove(k);
+				});
+			}else{
+				Response.Cookies(key.split(".")[0] || key).Expires = "1/1/1980";
+			}
+		},
+		
+		/**
+		 * @ COOKIE的生存时间
+		 * @ param key <string | array | undefined> 标识
+		 * @ param value <string> 时间选择器 year(n), month(n), day(n), hour(n), minute(n), second(n), mSecond(n)
+		 * @ return null
+		 */
+		keep : function(key, value){
+			if ( value == undefined ){
+				for ( var i in key )
+				{
+					this.keep(i, key[i]);
+				}
+			}else{
+				var newDate = dateDiff(new Date(), value).toGMTString();
+				
+				$.use("date", function(D){
+					newDate = D.dateStr(newDate, "Y/m/d H:I:S");
+				});
+				
+				Response.Cookies(key.split(".")[0] || key).Expires = newDate;	
+			}
+		},
+		
+		/**
+		 * @ COOKIE的生存时间
+		 * @ param key <string | array | undefined> 标识
+		 * @ param value <string> 时间选择器 year(n), month(n), day(n), hour(n), minute(n), second(n), mSecond(n)
+		 * @ return null
+		 */
+		domain : function(key, value){
+			if ( value == undefined ){
+				for ( var i in key )
+				{
+					this.domain(i, key[i]);
+				}
+			}else{
+				Response.Cookies(key.split(".")[0] || key).Domain = value;	
+			}
+		}
+	});
+	
+	function dateDiff(date, value){
+		var r = /^(\w+)\((\d+)\)$/.exec(value),
+			f = {
+				year : function(n){
+					return new Date(this + n * 12 * 30 * 24 * 60 * 60 * 1000);
+				},
+				month : function(n){
+					return new Date(this + n * 30 * 24 * 60 * 60 * 1000);
+				},
+				day : function(n){
+					return new Date(this + n * 24 * 60 * 60 * 1000);
+				},
+				hour : function(n){
+					return new Date(this + n * 60 * 60 * 1000);
+				},
+				minute : function(n){
+					return new Date(this + n * 60 * 1000);
+				},
+				second : function(n){
+					return new Date(this + n * 1000);
+				},
+				msecond : function(n){
+					return new Date(this + n);
+				}
+			};
+			
+		if ( r ){
+			var m1 = r[1], m2 = r[2];
+			return f[m1].call(Number(date.getTime()), m2);
+		}else{
+			return new Date();
+		}
+	}
+	
+	// 对象扩展
+	$.augment(cookie, {
+		init : function(key){
+			return [key].toQuery(this);
+		},
+		get : cookie.get,
+		set : function(value){ cookie.set(this[0], value); return this; },
+		remove : cookie.remove,
+		keep : function(n){
+			cookie.keep(this[0], n);
+			return this;
+		},
+		domain : function(value){
+			cookie.keep(this[0], value);
+			return this;
+		}
+	});
+	
+	return cookie;
 });
 %>
