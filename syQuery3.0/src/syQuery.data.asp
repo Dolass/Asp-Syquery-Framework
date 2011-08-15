@@ -5,7 +5,29 @@
  */
 $.add("data", function(){
 	// 创建数据库操作对象实例
-	var data = $("data");
+	var data = $("data"),
+		core = function(object){
+			this.length = 0;
+			this.object = object || null;
+		};
+	
+	// 次级对象扩展
+	$.augment(core, {
+		each : function(callback){
+			var _Core = this[0], 
+				i = 0;
+				
+			_Core.MoveFirst();
+			while ( !_Core.Eof )
+			{
+				callback(i, _Core);
+				_Core.MoveNext();
+				i++;
+			}
+			
+			return this;
+		}
+	});
 	
 	// 原型扩展
 	$.mix(data, {
@@ -33,10 +55,32 @@ $.add("data", function(){
 			}
 		},
 		
-		close : function(){
+		close : function(object){
+			try{
+				object.Close();
+				object = null;
+			}catch(e){ object = null; }
+		},
+		
+		select : function(sql, callback, conn, rs, moden, type){
+			var _this 	= 	this, retValue;
+				moden 	= 	moden 	== 	undefined ? 1 : moden;
+				type 	= 	type 	== 	undefined ? 1 : type;
+				rs 		= 	rs 		== 	undefined ? new ActiveXObject($.config.ActivexObject.record) : rs;
+				conn 	= 	conn 	== 	undefined ? new ActiveXObject($.config.ActivexObject.conn) : conn;
 			
+			if ( $.isArray(sql) ){
+				sql.each(function(i, k){
+					return _this.select(k, callback, rs, conn, moden, type);
+				});
+			}else{
+				rs.Open(sql, conn, moden, type);
+				retValue = callback.call([rs].toQuery(new core()), rs, conn);
+				rs.Close();
+				return retValue;
+			}
 		}
-	})
+	});
 	
 	$.fn.extend({
 		
