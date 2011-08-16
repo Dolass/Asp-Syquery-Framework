@@ -757,7 +757,7 @@ $.config.type.each(function( i, k ){
 				for ( var i = 0 ; i < eq.reqiure.length ; i++ )
 				{
 					if ( $.loaded.indexOf(eq.reqiure[i]) == -1 ){
-						$.include(_p + eq.reqiure[i] + "-min.asp");
+						$.include(_p + "syQuery." + eq.reqiure[i] + "-min.asp");
 						$.loaded.push(eq.reqiure[i]);
 					}
 				}

@@ -1,5 +1,4 @@
-﻿<!--#include file="../src/syQuery.asp" -->
-<!--#include file="../src/syQuery.data.asp" -->
+﻿<!--#include file="../build/syQuery-min.asp" -->
 <%
 $.execute("data", function(D){
 	var x = D.open("PBLog4.mdb");
@@ -15,5 +14,5 @@ $.execute("data", function(D){
 		$.echo(t);
 	}
 	D.close(x.object);
-});
+},{reqiure : ["data"]});
 %>
