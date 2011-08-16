@@ -523,34 +523,6 @@ $.augment( Array, {
 	}
 } );
 
-/**
- * json prototype method
- * useing json.medthod <function>
- * return <Array>
- */
-$.augment( Object, {
-	// 删除JSON中某个属性
-	remove : function( k ){
-		if ( $.isArray(k) ){
-			for ( var i = 0 ; i < k.length ; i++ ){ delete this[k[i]]; }
-		}else{
-			delete this[k];
-		}
-		
-		return this;
-	},
-	
-	// 添加修改JSON属性
-	update : function(key, value){
-		if ( value == undefined ){
-			return $.mix(this, key);
-		}else{
-			this[key] = value;
-			return this;
-		}
-	}
-});
-
 // 创建每个 is前缀的判断数据类型的方法
 $.config.type = ["Function", "String", "Array", "Object", "Boolean", "Number"];
 $.config.type.each(function( i, k ){
@@ -1257,5 +1229,44 @@ $.add("cookie", function(){
 	});
 	
 	return cookie;
+});
+
+// json 插件
+$.add("json", function(){
+	// 创建json函数对象
+	var json = function(){
+		this.length = 0;
+		this.object = null;
+	}
+	
+	json.init = function(selector){
+		selector = $.isArray(selector) ? selector : [selector];
+		return selector.toArray(new json(), null);
+	}
+	
+	$.augment(json, {
+		// 删除JSON中某个属性
+		remove : function( k ){
+			if ( $.isArray(k) ){
+				for ( var i = 0 ; i < k.length ; i++ ){ delete this[k[i]]; }
+			}else{
+				delete this[k];
+			}
+			
+			return this;
+		},
+		
+		// 添加修改JSON属性
+		update : function(key, value){
+			if ( value == undefined ){
+				return $.mix(this, key);
+			}else{
+				this[key] = value;
+				return this;
+			}
+		}
+	});
+	
+	return json.init;
 });
 %>
