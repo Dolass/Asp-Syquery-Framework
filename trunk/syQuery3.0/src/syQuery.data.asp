@@ -4,6 +4,7 @@
  * @Project Info : 略
  */
 $.add("data", function(){
+	
 	// 创建数据库操作对象实例
 	var data = $("data"),
 		core = function(object){
@@ -26,11 +27,23 @@ $.add("data", function(){
 			}
 			
 			return this;
+		},
+		
+		getRows : function(){
+			var _Core = this[0],
+				tempArr = [];
+			try{ 
+				tempArr = _Core.GetRows().toArray(); 
+			}catch(e){}
+			
+			return getRows( tempArr, _Core.Fields.Count );	  
 		}
 	});
 	
 	// 原型扩展
 	$.mix(data, {
+		
+		// 打开数据库连接
 		open : function(options, object){
 			if ( object == undefined ) object = new ActiveXObject($.config.ActivexObject.conn);
 			var setting = {
@@ -55,6 +68,7 @@ $.add("data", function(){
 			}
 		},
 		
+		// 关闭数据库连接
 		close : function(object){
 			try{
 				object.Close();
@@ -62,6 +76,7 @@ $.add("data", function(){
 			}catch(e){ object = null; }
 		},
 		
+		// 查询数据库
 		select : function(sql, callback, conn, rs, moden, type){
 			var _this 	= 	this, retValue;
 				moden 	= 	moden 	== 	undefined ? 1 : moden;
@@ -79,13 +94,69 @@ $.add("data", function(){
 				rs.Close();
 				return retValue;
 			}
+		},
+		
+		// 插入数据库
+		insert : function(data, table, callback, conn, rs){
+			var _this = this, retValue;
+			rs = rs == undefined ? new ActiveXObject($.config.ActivexObject.record) : rs;
+			conn = conn == undefined ? new ActiveXObject($.config.ActivexObject.conn) : conn;
+			if ( !$.isArray(data) ) data = [data];
+			
+			rs.Open("Select * From " + table, conn, 1, 2);
+			// 开始数据处理
+			data.each(function(i, k){
+				rs.AddNew(); // 添加新数据
+				for ( var j in k ){
+					rs(j) = k[j];
+				}	
+				rs.Update();
+			});
+			
+			retValue = callback.call([rs].toQuery(new core()), rs, conn);
+			rs.Close();
+			
+			return retValue;
+		},
+		
+		// 更新数据库
+		update : function(data, table, mainKey, mainKeyValue, callback, conn, rs){
+			var _this = this, retValue;
+			rs = rs == undefined ? new ActiveXObject($.config.ActivexObject.record) : rs;
+			conn = conn == undefined ? new ActiveXObject($.config.ActivexObject.conn) : conn;
+			if ( !$.isArray(data) ) data = [data];
+			
+			rs.Open("Select * From " + table + " Where " + mainKey + "=" + mainKeyValue, conn, 1, 3);
+			// 开始处理数据
+			data.each(function(i, k){
+				for ( var j in k ){
+					rs(j) = k[j];
+				}	
+				rs.Update();
+			});
+			
+			retValue = callback.call([rs].toQuery(new core()), rs, conn);
+			rs.Close();
+			
+			return retValue;
+		},
+		
+		// 删除数据库
+		destory : function(table, mainKey, mainKeyValue, callback, conn, rs){
+			var _this = this, retValue;
+			rs = rs == undefined ? new ActiveXObject($.config.ActivexObject.record) : rs;
+			conn = conn == undefined ? new ActiveXObject($.config.ActivexObject.conn) : conn;
+			
+			rs.Open("Select * From " + table + " Where " + mainKey + "=" + mainKeyValue, conn, 1, 3);
+			retValue = callback.call([rs].toQuery(new core()), rs, conn);
+			rs.Delete();
+			rs.Close();
+			
+			return retValue;
 		}
 	});
 	
-	$.fn.extend({
-		
-	});
-	
+	// 私有方法
 	function rootDefault(i){
 		var _nice = "";
 		for ( var j = 0 ; j < i ; j++ ){ _nice += "../";}
@@ -106,6 +177,18 @@ $.add("data", function(){
 		}catch(ex){
 			return tryOpen(obj, defaults, ++j);
 		}
+	}
+	
+	function getRows( arr, fieldslen ){
+		var len = arr.length / fieldslen, data=[], sp; 
+		
+		for( var i = 0; i < len ; i++ ) { 
+			data[i] = new Array(); 
+			sp = i * fieldslen; 
+			for( var j = 0 ; j < fieldslen ; j++ ) { data[i][j] = arr[sp + j] ; } 
+		}
+		
+		return data; 
 	}
 	
 	return data;
