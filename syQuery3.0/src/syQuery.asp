@@ -16,12 +16,13 @@ var $ = (function(){
  	  *	@ return <syQuery object>
 	 */
 	var limitedKey = ["config", "ready", "error", "root", "charset", "createQuery", "merge", "mix", "augment", "type", "echo", "fn", "die", "isFunction", "isString", "isArray", "isObject", "isBoolean", "isNumber", "isDate", "isJson", "isQuery", "include", "add", "use", "execute", "query", "querys", "posts", "post", "Enumerator", "parseJSON", "getIP"];
-	var _Query = function( key, fn ){
+	var _Query = function( key, object, fn ){
 		if ( _Query.isString( key ) ){
 			if ( limitedKey.indexOf(key) == -1 )
 			{
 				// create syQuery object
 				_Query[key] = function( selector, context ){
+					context = object ? object : context;
 					return new _Query.fn.init( selector, context, fn );
 				};
 				limitedKey.push(key);
@@ -773,17 +774,22 @@ $.config.type.each(function( i, k ){
 		rvalidescape = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,
 		rvalidtokens = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
 		rvalidbraces = /(?:^|:|,)(?:\s*\[)+/g;
+		
+	var merge = function(method){
+		return array.toQuery.call(method, $.fn, this.object);
+	}
 	
 	$.fn.extend({
 		toArray : function(){ return array.slice.call( this, 0 ); },
-		slice : function(){ return array.slice.apply(this, arguments); },
+		slice : function(){ return this.merge(array.slice.apply(this, arguments)); },
 		eq : function(i){ return i === -1 ? this.slice( i ) : this.slice( i, +i + 1 ); },
 		each : function(fn){ return array.each.call(this, fn); },
-		map : function(fn){ return array.toQuery.call(array.map.call(this, fn), $.fn, this.object); },
+		map : function(fn){ return this.merge(array.map.call(this, fn)); },
 		first : function(){ return this.eq(0); },
 		last : function(){ return this.eq(-1); },
-		get : function(num){ return num == undefined ? this.toArray() : ( num < 0 ? this.slice(num)[ 0 ] : this[ num ] ); },
-		trim : function(){ return array.trim.call(this); }
+		get : function(num){ return num == undefined ? this.toArray() : ( num < 0 ? this.slice(num)[0] : this[num] ); },
+		trim : function(){ return this.merge(array.trim.call(this)); },
+		merge : function(method){ return array.toQuery.call(method, $.fn, this.object); }
 	});
 	
 	$.extend({
