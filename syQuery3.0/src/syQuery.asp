@@ -1270,6 +1270,10 @@ $.add("json", function(){
 				this[key] = value;
 				return this;
 			}
+		},
+		
+		param : function( data ){
+			
 		}
 	});
 	
