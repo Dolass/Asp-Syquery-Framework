@@ -10,16 +10,19 @@
 </head>
 <body>
 <%
-	$.execute("xmlhttp", function(X){
-		var ajax = new X();
-		ajax.url("http://syquery.cn/syQuery3.0/docs/api.asp").data({
-			a : "123",
-			b : "456",
-			c : "789"
-		}).subCore("onSuccess", function(xhr){
-			$.echo(xhr.responseBody);
-		}).send().abort();
+	$.add("test", function(){
+		var test = function(){
+		
+		}
+		
+		$.mix(test, {
+			kof : 2
+		});
+		
+		return test;
 	});
+	
+	$.echo($.use("test").kof)
 %>
 </body>
 </html>

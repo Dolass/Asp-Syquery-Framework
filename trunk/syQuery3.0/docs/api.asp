@@ -1,4 +1,4 @@
 ﻿<%@LANGUAGE="JAVASCRIPT" CODEPAGE="65001"%>
 <%
-Response.Write(String(Request.QueryString));
+Response.Write("return 1");
 %>

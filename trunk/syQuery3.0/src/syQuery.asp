@@ -703,6 +703,10 @@ $.config.type.each(function( i, k ){
 		 * @return anyObject
 		 */
 		use : function( key, fn ){
+			if ( fn == undefined ){
+				return $[key];
+			}
+			
 			if ( $[key] != undefined ){
 				return fn( $[key] );
 			}
