@@ -1,4 +1,5 @@
 ﻿<!--#include file="../src/syQuery.asp" -->
+<!--#include file="../src/syQuery.stream.asp" -->
 <!--#include file="../src/syQuery.xmlhttp.asp" -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -10,19 +11,14 @@
 </head>
 <body>
 <%
-	$.add("test", function(){
-		var test = function(){
-		
-		}
-		
-		$.mix(test, {
-			kof : 2
-		});
-		
-		return test;
-	});
-	
-	$.echo($.use("test").kof)
+$.execute("stream, xmlhttp", function(stream, xmlhttp){
+	var STM = $("Stream"),
+		X = new xmlhttp();
+	X.setUrl("http://www.baidu.com").setDataType("binary").success(function(text){
+		$.echo(STM(text).bin()[0]);
+	}).send().abort();
+	$.echoError("<br />")
+});
 %>
 </body>
 </html>
