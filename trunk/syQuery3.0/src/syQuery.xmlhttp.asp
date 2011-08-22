@@ -134,30 +134,18 @@ $.add("xmlhttp", function(){
 	});
 	
 	$.mix(ajax, {
-		post : function(url, data, callback, dataType){
-			var ajax = this;
-				
-				ajax = ajax.type("POST");
-				ajax = ajax.url(url);
-				ajax = ajax.success(callback);
-				ajax = ajax.setDataType(dataType || "text");
-				
-			if ( data ) ajax = ajax.data(data);
-			
-			ajax.send().abort();
+		post : function(url, data, callback, dataType){		
+			var Ajax = new this();
+			Ajax.setType("POST").setUrl(url).success(callback).setDataType(dataType || "text");
+			if ( data ) ajax.setData(data);
+			Ajax.send().abort();
 		},
 		
 		get : function(url, data, callback, dataType){
-			var ajax = this;
-				
-				ajax = ajax.type("GET");
-				ajax = ajax.url(url);
-				ajax = ajax.success(callback);
-				ajax = ajax.setDataType(dataType || "text");
-				
-			if ( data ) ajax = ajax.data(data);
-			
-			ajax.send().abort();
+			var Ajax = new this();			
+			Ajax.setType("GET").setUrl(url).success(callback).setDataType(dataType || "text");			
+			if ( data ) Ajax.setData(data);
+			Ajax.send().abort();
 		}
 	});
 	

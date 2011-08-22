@@ -78,7 +78,16 @@ var $ = (function(){
 		syQuery : "3.0", // 版本号
 		length : 0, // 内容数量
 		object : null, // 指针对象
-		size : function(){ return this.length; } // 内容长度
+		size : function(){ return this.length; }, // 内容长度
+		/**
+		 * 改变syQuery对象中的object属性，并返回该对象
+		 * @ param object <object> 新对象
+		 * @ return <syQuery>
+		 */
+		shift : function( object ){
+			this.object = object || null;
+			return this;
+		}
 	}
 	
 	_Query.createQuery = function( selector, ret, context ){
@@ -88,10 +97,11 @@ var $ = (function(){
 			// 数组转化为syQuery对象
 			return selector.toQuery( ret, context );
 		}else if ( this.isObject(selector) ){
-			var isBinary ;
+			var isBinary, isObjectArr ;
 			try{ selector.constructor; isBinary = true; }catch(e){ isBinary = false; }
+			try{ isObjectArr = this.isNumber( selector.length ); }catch(e){ isObjectArr = false; }
 			
-			if ( this.isNumber( selector.length ) && (isBinary === true)  ){
+			if ( isBinary === true || isObjectArr === true ){
 				// 使用数组方法来转化为syQuery对象
 				return Array.prototype.toQuery.call(selector, ret, context);
 			}else{
