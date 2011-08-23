@@ -61,7 +61,7 @@ var $ = (function(){
 	_Query.error = []; // 框架全局错误绑定代码列表
 	_Query.root = ""; // 框架运行物理地址相对于根地址偏移的位置
 	_Query.charset = "utf-8"; // 框架编码
-	_Query.plugin = "syQuery3.0/src"; // 相对于网站跟目录的地址，不带/ （只填文件夹）
+	_Query.plugin = "syQuery3.0/build"; // 相对于网站跟目录的地址，不带/ （只填文件夹）
 	_Query.loaded = []; // 系统已经加载的其他模块名
 	
 	// syQuery 对象构造函数
@@ -98,9 +98,9 @@ var $ = (function(){
 			return selector.toQuery( ret, context );
 		}else if ( this.isObject(selector) ){
 			var isBinary, isObjectArr ;
-			try{ selector.constructor; isBinary = true; }catch(e){ isBinary = false; }
+			try{ selector.constructor; isBinary = false; }catch(e){ isBinary = true; }
 			try{ isObjectArr = this.isNumber( selector.length ); }catch(e){ isObjectArr = false; }
-			
+
 			if ( isBinary === true || isObjectArr === true ){
 				// 使用数组方法来转化为syQuery对象
 				return Array.prototype.toQuery.call(selector, ret, context);
@@ -115,32 +115,6 @@ var $ = (function(){
 			return ret;
 		}
 		
-	}
-	
-	/**
-	 * 为syQuery对象增加子项的方法
-	 * ret <syQuery object> syQuery对象
-	 * selector <anyObject> 数据
-	 * object <object | null> 范围对象
-	 */
-	_Query.merge = function( ret, selector, object )
-	{
-		var i = ret.length, j = 0;
-		if ( typeof selector.length === "number" )
-		{
-			for ( var l = selector.length; j < l; j++ ) 
-			{ 
-				ret[ i++ ] = selector[ j ]; 
-			} 
-		}else{
-			while ( selector[j] !== undefined ) 
-			{
-				ret[ i++ ] = selector[ j++ ]; 
-			} 
-		}
-		ret.length = i;
-		ret.object = object || null;
-		return ret;
 	}
 	
 	/**
@@ -514,7 +488,7 @@ $.augment( Array, {
 	
 	// 形成syQuery对象主方法
 	toQuery : function( ret, context ){
-		var i = ret.length, j = 0, selector = this;
+		var i = 0, j = 0, selector = this;
 
 		for ( var l = selector.length; j < l; j++ ) 
 		{ 
@@ -531,6 +505,20 @@ $.augment( Array, {
 		return this.map(function( i, k ){
 			return k.trim();
 		});
+	},
+	
+	// 删除数组中的重复项
+	unique : function(){
+		var tmpArr = this.sort();
+		
+		for ( var i = tmpArr.length - 1 ; i >= 1 ; i-- )
+		{
+			if( tmpArr[ i - 1 ] == tmpArr[ i ] ){
+				tmpArr.splice( i, 1 );
+			}    
+		}
+		
+		return tmpArr;
 	}
 } );
 
@@ -803,7 +791,12 @@ $.config.type.each(function( i, k ){
 		last : function(){ return this.eq(-1); },
 		get : function(num){ return num == undefined ? this.toArray() : ( num < 0 ? this.slice(num)[0] : this[num] ); },
 		trim : function(){ return this.merge(array.trim.call(this)); },
-		merge : function(method){ return array.toQuery.call(method, $.fn, this.object); }
+		merge : function(method){ return array.toQuery.call(method, this, this.object); },
+		even : function(){ return this.map(function(i, k){ return i % 2 === 0 ? null : k; }); },
+		odd : function(){ return this.map(function(i, k){ return i % 2 === 0 ? k : null; }); },
+		gt : function(j){ return this.map(function(i, k){ return i > j ? k : null; }); },
+		lt : function(j){ return this.map(function(i, k){ return i < j ? k : null; }); },
+		unique : function(){ return this.merge(array.unique.call(this)); }
 	});
 	
 	$.extend({
