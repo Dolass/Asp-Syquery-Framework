@@ -155,10 +155,10 @@ $.add("xmlhttp", function(){
 			var _item = data[i];
 			if ( $.isArray(_item) ){
 				_item.each(function(j, k){
-					tmpArr.push(i + "=" + k);
+					tmpArr.push(i + "=" + encodeURIComponent(k));
 				});
 			}else{
-				tmpArr.push(i + "=" + _item);
+				tmpArr.push(i + "=" + encodeURIComponent(_item));
 			}
 		}
 		return tmpArr.join("&");

@@ -291,7 +291,7 @@ $.add("xml", function(){
 			return this.map(function( i, element ){
 				var _parent = element.parentNode;
 				return _parent && _parent.nodeType !== 11 ? _parent : null;
-			}).unique();
+			});
 		},
 		
 		/**
@@ -302,7 +302,7 @@ $.add("xml", function(){
 			return this.map(function( i, element ){
 				var _next = element.nextSibling || null;
 				return _next;
-			}).unique();
+			});
 		},
 		
 		/**
@@ -313,7 +313,7 @@ $.add("xml", function(){
 			return this.map(function( i, element ){
 				var _prev = element.previousSibling || null;
 				return _prev;
-			}).unique();
+			});
 		},
 		
 		/**
