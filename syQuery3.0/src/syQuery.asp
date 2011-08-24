@@ -508,8 +508,8 @@ $.augment( Array, {
 	},
 	
 	// 删除数组中的重复项
-	unique : function(){
-		var tmpArr = this.sort();
+	unique : function(callback){
+		var tmpArr = this.sort(callback);
 		
 		for ( var i = tmpArr.length - 1 ; i >= 1 ; i-- )
 		{
