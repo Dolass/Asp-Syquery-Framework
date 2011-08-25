@@ -36,7 +36,7 @@ $.add("xml", function(){
 			}
 			
 			if ( openStatus !== false ){
-				return xml(object.documentElement);
+				return object.documentElement;
 			}else{
 				return false;
 			}
@@ -240,7 +240,7 @@ $.add("xml", function(){
 						if ( value.toLowerCase() == "null" ) value = "";
 					}
 					
-					if ( value == null ) key = "";
+					if ( value == null ) value = "";
 					
 					_element.appendChild( this.object.createCDATASection(value + "" || "") );
 				});
@@ -266,8 +266,10 @@ $.add("xml", function(){
 					}
 					
 					if ( value == null ) value = "";
-
-					_element.appendChild( this.object.createTextNode(value) );
+					
+					var _t = this.object.createTextNode(value);
+					
+					_element.appendChild( _t );
 				});
 				return this;
 			}
