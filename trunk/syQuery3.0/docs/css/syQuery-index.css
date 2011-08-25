@@ -1,7 +1,0 @@
-﻿@charset "utf-8";
-/* CSS Document */
-.page{}
-	.page .page-top{ height:26px; line-height:26px; background:url("http://img04.taobaocdn.com/tps/i4/T15_ShXjRjXXXXXXXX-10-26.png"); }
-	.nave{ background:url("http://img02.taobaocdn.com/tps/i2/T1p9GgXcRjXXXXXXXX-87-87.png") repeat-x; height:122px;}
-	.nave .nave-top{ height:87px;}
-	.nave .nave-bom{ height:35px; background:url("http://img03.taobaocdn.com/tps/i3/T1FPigXntzXXXXXXXX-11-35.png") repeat-x;}
