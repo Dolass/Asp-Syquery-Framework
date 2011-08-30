@@ -199,5 +199,5 @@ $.add("package", function(){
 	}
 	
 	return package;
-});
+}, { reqiure : ["stream", "fso", "xml"] });
 %>
