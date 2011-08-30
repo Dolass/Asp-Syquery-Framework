@@ -1254,7 +1254,7 @@ $.add("json", function(){
 	
 	json.init = function(selector){
 		selector = $.isArray(selector) ? selector : [selector];
-		return selector.toArray(new json(), null);
+		return selector.toQuery(new json(), null);
 	}
 	
 	$.augment(json, {
