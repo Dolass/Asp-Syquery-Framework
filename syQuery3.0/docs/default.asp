@@ -1,8 +1,4 @@
 ﻿<!--#include file="../src/syQuery.asp" -->
-<!--#include file="../src/syQuery.fso.asp" -->
-<!--#include file="../src/syQuery.xml.asp" -->
-<!--#include file="../src/syQuery.stream.asp" -->
-<!--#include file="../src/syQuery.package.asp" -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -11,9 +7,12 @@
 </head>
 <body>
 <%
-$.execute("package", function(Package){
-	var P = new Package();
-	P.unpack("1.xml", "d");
+$.execute("json", function(P){
+	var x = P({a:1,b:2});
+	for ( var i in x )
+	{
+		$.echo(i + " : " + x[i] + "<br />");
+	}
 })
 %>
 </body>
