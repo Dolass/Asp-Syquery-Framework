@@ -341,5 +341,5 @@ $.add("upload", function(){
 	}
 	
 	return upload;	
-});
+}, { reqiure : ["stream"] });
 %>
