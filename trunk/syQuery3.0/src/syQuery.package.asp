@@ -1,6 +1,6 @@
 ﻿<%
 $.add("package", function(){
-	var package = function(){
+	var _package = function(){
 		try{ 
 			this.baseObject = new ActiveXObject("Microsoft.XMLDOM"); 
 		}catch(e){ 
@@ -8,7 +8,7 @@ $.add("package", function(){
 		}
 	}
 	
-	$.augment(package, {
+	$.augment(_package, {
 		/**
 		 * 文件打包方法
 		 * @ param which <string> 目标文件夹
@@ -198,6 +198,6 @@ $.add("package", function(){
 		return temp.nodeTypedValue;
 	}
 	
-	return package;
+	return _package;
 }, { reqiure : ["stream", "fso", "xml"] });
 %>
