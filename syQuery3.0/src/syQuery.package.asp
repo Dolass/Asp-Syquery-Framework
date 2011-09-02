@@ -45,7 +45,11 @@ $.add("package", function(){
 
 				// 循环写入文件夹数据的 base64 编码数据
 				ALLFOS.each(function( i, k ){
-					k = k.replace(/^(\.\.\/)+/, "");
+				
+					k = k.replace(which, "");
+					if ( k == "" ) k == ".";
+					k = k.replace(/^\//, "");
+					
 					if ( $.isFunction( options.replaceFolderPath ) ) k = options.replaceFolderPath(k);
 					
 					xml(root).getElementsByTagName("folders").append("item").html( k );
@@ -61,7 +65,10 @@ $.add("package", function(){
 				ALLFIS.each(function( i, k ){
 					var binaryText = getFileBinary(k);
 					
-					k = k.replace(/^(\.\.\/)+/, "");
+					k = k.replace(which, "");
+					if ( k == "" ) k == ".";
+					k = k.replace(/^\//, "");
+					
 					if ( $.isFunction( options.replaceFilePath ) ) k = options.replaceFilePath(k);
 					
 					xml(root).getElementsByTagName("files").append("item").attr({
