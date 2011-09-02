@@ -25,8 +25,9 @@ $.add("package", function(){
 				packedFile : null
 			}, options);
 			
-			var ALLFOS = getAllByFolder( which ),
-				ALLFIS = getAllByFile(ALLFOS),
+			var ALLFOS = getAllByFolder( which );
+				ALLFOS.push(which);
+			var ALLFIS = getAllByFile(ALLFOS),
 				ALLNUM = ALLFOS.length + ALLFIS.length,
 				_this = this;
 				
