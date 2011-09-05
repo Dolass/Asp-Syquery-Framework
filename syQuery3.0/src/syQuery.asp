@@ -800,6 +800,10 @@ $.config.type.each(function( i, k ){
 	});
 	
 	$.extend({
+		// 唯一标识
+		guid : function(){
+			return (new ActiveXObject("Scriptlet.TypeLib")).Guid;
+		},
 		// 对象枚举
 		Enumerator : function( t, ret, callback ){
 			var _data, _ret, _callback;

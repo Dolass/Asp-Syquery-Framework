@@ -11,9 +11,7 @@
 <ul>
 <%
 $.execute("md5,sha1", function(md5, sha1){
-	$.echo(md5("123456adsfds") + " : " + md5("123456adsfds").length);
-	$.echo("<br />")
-	$.echo(sha1("123456adsfds") + " : " + sha1("123456adsfds").length);
+$.echo($.guid())
 })
 %>
 </ul>
