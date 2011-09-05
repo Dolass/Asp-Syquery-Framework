@@ -14,6 +14,7 @@ $.add("data", function(){
 	
 	// 次级对象扩展
 	$.augment(core, {
+		// 遍历循环Rs对象
 		each : function(callback){
 			var _Core = this[0], 
 				i = 0;
@@ -29,6 +30,7 @@ $.add("data", function(){
 			return this;
 		},
 		
+		// 相当于VBSCRIPT的getRows方法
 		getRows : function(){
 			var _Core = this[0],
 				tempArr = [];
@@ -37,6 +39,65 @@ $.add("data", function(){
 			}catch(e){}
 			
 			return getRows( tempArr, _Core.Fields.Count );	  
+		},
+		
+		// 数据分页过程
+		page : function(absolutePage, pageSize, callback, object){
+			var _Core = this[0], i = 0;
+			
+			var RsCount = _Core.RecordCount;
+			if ( pageSize > RsCount ) pageSize = RsCount;
+			
+			var PageCount = Math.ceil( RsCount / pageSize );
+			if ( PageCount < 0 ) PageCount = 0;
+			if ( absolutePage > PageCount ) absolutePage = PageCount;
+			if ( absolutePage < 1 ) absolutePage = 1;
+			
+			_Core.PageSize = pageSize;
+			_Core.AbsolutePage = absolutePage;
+			
+			while ( !_Core.Eof &&  i < pageSize )
+			{
+				if ( callback != undefined ) callback.call(object || [rs].toQuery(new core()), _Core, i);
+				i++;
+				_Core.MoveNext();
+			}
+			
+			return [RsCount, pageSize, absolutePage, PageCount];
+		},
+		
+		// 分页符分页过程
+		pageBar : function( total, pageSize, absolutePage, pageCount, callback ){
+			if ( pageCount == undefined || pageCount == null ) pageCount = Math.ceil(total / pageSize);
+			
+			var space = 0, 
+				_Str = "",
+				l_cur,
+				r_cur,
+				_l_cur;
+			
+			l_cur = absolutePage - 4;
+			
+			if ( l_cur < 1 ){
+				l_cur = 1;
+				r_cur = 9;
+			}else{
+				r_cur = l_cur + 8;
+				if ( r_cur > total ) r_cur = total;
+				_l_cur = r_cur - 8;
+				if ( _l_cur < 1 ){
+					l_cur = 1;
+				}else{
+					l_cur = _l_cur;
+				}
+			}
+			
+			for ( var t = l_cur ; t <= r_cur ; t++ )
+			{
+				if ( $.isFunction(callback) ) _Str += callback(t, t == absolutePage, total, pageSize, pageCount) || "";
+			}
+			
+			return _Str;
 		}
 	});
 	
