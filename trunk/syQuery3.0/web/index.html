@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link type="text/css" rel="stylesheet" href="css reset.css" />
+<link type="text/css" rel="stylesheet" href="common.css" />
+<script language="javascript" src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+<script language="javascript">
+function reSizeWindow(){
+	$(".wrap .wrap-content .mianToolbar, .wrap .wrap-content .mianContent").css({
+		height : ($(window).height() - 6 - 74 - 23) + "px"
+	});
+}
+
+$(function(){
+	reSizeWindow();
+});
+</script>
+<title>无标题文档</title>
+</head>
+<body>
+<div class="wrap">
+	<div class="top-log"></div>
+    <div class="top-bar-bg">
+    	<div class="logo"></div>
+        <div class="fl">
+    		<div class="font-logo fl"></div>
+        	<div class="main-navtion fl">
+            	<ul>
+                	<li class="first"><a href="">系统管理</a></li>
+                    <li><a href="">用户管理</a></li>
+                    <li><a href="">日志管理</a></li>
+                    <li><a href="">内容审计</a></li>
+                    <li><a href="">访问控制</a></li>
+                    <li><a href="">宽带管理</a></li>
+                    <li><a href="">网络分析</a></li>
+                    <li class="last"><a href="">统计分析</a></li>
+                </ul>
+            </div>
+        </div>
+        <a class="logout fr" href=""></a>
+        <div class="clear"></div>
+    </div>
+    <div class="adBar-bg">
+    	<div class="fl tools-1"></div>
+        <div class="fr">
+        	<a href="" class="home"></a>
+            <span class="split"></span>
+            <a href="javascript:void(0);" class="prev" onclick="history.go(-1);"></a>
+            <span class="split"></span>
+            <a href="javascript:void(0);" class="next" onclick="history.go(1);"></a>
+            <span class="split"></span>
+            <a href="" class="user"></a>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="wrap-content">
+    	<div class="mianToolbar fl">
+        	<div class="toolbar-bg"><div class="mianToolbarTitle"></div></div>
+        </div>
+        <div class="mainContent">
+        	<div class="toolbar-bg mainContentTitle">
+            	<ul>
+                	<li><a href="">用户列表</a></li>
+                    <li class="current">用户属性</li>
+                    <li><a href="">其他设置</a></li>
+                </ul>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="wrap-foot">
+    	<div class="lead fl">当前用户：admin 角色：管理员</div>
+        <div class="mark fr"><div class="date">日期：2011年11月24日 星期四</div></div>
+        <div class="clear"></div>
+    </div>
+</div>
+</body>
+</html>
