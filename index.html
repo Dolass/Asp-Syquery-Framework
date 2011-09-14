@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script language="javascript" src="jQueryFrameWork/jQuery.1.6.2.js"></script>
+<script language="javascript" src="jQueryFrameWork/jQuery.loader.js"></script>
+<title>无标题文档</title>
+</head>
+<body>
+<script language="javascript">
+	var css = "http://php.pjblog4.com/layout.css";
+	var script = "http://php.pjblog4.com/jQuery.syQQ.js?v=20110308";
+
+	
+syQuery.add("test", function(){
+	return function(a){
+		alert(a + 2);
+	}
+});
+function a(){
+syQuery.use("test, test2", function(t1, t2){
+	syQuery.log($(document))
+}, { require : [script] });}
+
+</script>
+<div style="width:300px; height:300px; margin:100px auto; background:#000;" id="tip" onclick="a()"  />
+</body>
+</html>
