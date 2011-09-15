@@ -747,24 +747,43 @@ $.config.type.each(function( i, k ){
 			}else{
 				$.echo( $.error.join( fn == undefined ? "<br />" : fn ) );
 			}
+		},
+		
+		/**
+		 * @批量加载
+		 * @param mods <array> 
+		 * @param callback <function>
+ 		 * @return null
+		 */
+		build : function(mods, callback){
+			var config = {
+					isModule : false
+				}, 
+				p = $.root + $.plugin;
+				
+			p = (p.length === 0 ? "" : p + "/").replace(/\/\//g, "/");
+
+			if ( $.isBoolean(callback) ) config.isModule = callback;
+			if ( $.isJson(callback) ) config = $.extend(callback, config);
+			
+			mods.each(function( i, t ){
+				if ( config.isModule ){
+					$.include(t);
+				}else{
+					if ( $.loaded.indexOf(t) == -1 ){
+						$.include(p + "syQuery." + t + "-min.asp");
+						$.loaded.push(t);
+					}
+				}
+			});
+			
+			if ( $.isFunction(config.callback) ) config.callback();
 		}
 	});
 	
 	function dealEqMent( eq ){
 		if ( eq != undefined ){
-			if ( eq.reqiure ){
-				var root = $.root, path = $.plugin, _p = "";
-				_p = root + path;
-				_p = _p.length === 0 ? "" : _p + "/";
-				
-				for ( var i = 0 ; i < eq.reqiure.length ; i++ )
-				{
-					if ( $.loaded.indexOf(eq.reqiure[i]) == -1 ){
-						$.include(_p + "syQuery." + eq.reqiure[i] + "-min.asp");
-						$.loaded.push(eq.reqiure[i]);
-					}
-				}
-			}
+			if ( eq.reqiure ) $.build( eq.reqiure );
 		}
 	}
 	
