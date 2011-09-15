@@ -181,7 +181,7 @@
                     timer = self.later(function() {
                         timer = undefined;
                         error();
-                    }, (timeout || 10000) * 1000);
+                    }, (timeout || 1) * 1000);
                 }
             }
 			
@@ -219,52 +219,86 @@
 				});
 			}
 			
+			// 取得syQuery.module中插件对象
+			// 其实可以使用 syQuery.module["key"]来获取
 			mods = moduleName.split(",");
-			
 			for ( i = 0 ; i < mods.length ; i++ )
 			{
 				modArr.push(syQuery.module[mods[i].replace(/^\s+/, "").replace(/\s+$/, "")]);
 			}
 			
-			if ( moduleCallback == undefined ) return modArr;
-			
+			// 如果就指定模块名，没有没有FN的话，直接返回这个包含了对象的数组
+			// 如果该数组只存在一个对象，那么返回这个数组第一个数据对象，其他则返回数组
+			if ( moduleCallback == undefined ) return modArr.length === 0 ? modArr[0] : modArr;
 			return moduleCallback.apply(self, modArr);
 		},
 		
 		build : function( mod, callback ){
+			
+			/**
+			 * mod 必须是个数组
+			 * callback 可以是json格式或者function
+			 * 		- success  回调成功后执行的方法
+			 * 		- callback 回调单步加载完毕时执行的方法
+			 */
 			var i, 
 				A = mod.require.length, 
 				B = 0,
 				timer,
-				reTimer = true;
-			
+				reTimer = true,
+				config = {};
+				
+			if ( $.isFunction(callback) ) config.success = callback;
+
 			if ( mod.require != undefined ){
-				for ( i = 0 ; i < mod.require.length ; i++ ){
+				for ( i = 0 ; i < A ; i++ ){
 					var file = mod.require[i];
-					if ( file.substr(0, 7).toLowerCase() != "http://" ) file = this.Config.site + "/" + file + ".js";
 					
-					if ( $.inArray(file, syQuery.Evq) == -1 ){
-						this.buildScript(file, function(){
+					// 如果不是远程地址，直接强制使用默认地址头
+					// 再加上文件路径和JS来组成完整的文件远程地址
+					// 在通过script标签的包围来加载运行代码
+					if ( file.substr(0, 7).toLowerCase() != "http://" ) {
+						file = this.Config.site + "/" + file + ".js";
+					}
+					
+					if ( $.inArray(file, syQuery.Evq) == -1 ){	
+						this.buildScript(file, function(){	
 							syQuery.Evq.push(file);
 							B++;
-						});
+							$(this).remove(); // 移除
+							
+							/**
+							 * 这里的config.callback作用是可以回调当前加载的步骤。
+							 * 参数第一个为 加载的当前序列好号
+							 * 参数第二个为 一共需要加载的数量
+							 * 可以使用这2个参数来执行加载进度条显示效果
+							 */
+							if ( config.callback != undefined && $.isFunction(config.callback) ) {
+								config.callback.call(undefined, B, A);
+							}
+						});	
 					}else{
 						reTimer = false;
 						break;
 					}
 				}
+				
 				function laterCallback(){
 					if ( A == B ){
 						clearTimeout(timer);
-						callback();
+						config.success();
 					}else{
 						laterCallback();
 					}
 				}
+				
+				// 延迟判断。确保加载完毕后执行success方法
+				// 这里为什么需要使用延迟监听呢，主要是因为远程文件加载过程不能准确判断加载时间完毕
+				// 使用延迟，达到可以同步的目的
 				if ( reTimer == true ) { 
-					timer = setTimeout(laterCallback, 300); 
+					timer = setTimeout(laterCallback, 500); 
 				}else {
-					callback();
+					config.success();
 				}
 			}	
 		}

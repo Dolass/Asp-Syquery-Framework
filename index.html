@@ -19,8 +19,13 @@ syQuery.add("test", function(){
 });
 function a(){
 syQuery.use("test, test2", function(t1, t2){
-	syQuery.log($(document))
+	syQuery.log($.fn.syQQ);
 }, { require : [script] });}
+//	syQuery.buildScript(script, function(){
+//		syQuery.log($.fn.syQQ);
+//		$(this).remove();
+//		syQuery.log($.fn.syQQ);
+//	})
 
 </script>
 <div style="width:300px; height:300px; margin:100px auto; background:#000;" id="tip" onclick="a()"  />
