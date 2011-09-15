@@ -764,7 +764,7 @@ $.config.type.each(function( i, k ){
 			p = (p.length === 0 ? "" : p + "/").replace(/\/\//g, "/");
 
 			if ( $.isBoolean(callback) ) config.isModule = callback;
-			if ( $.isJson(callback) ) config = $.extend(callback, config);
+			if ( $.isObject(callback) && $.isJson(callback) ) config = $.extend(callback, config);
 			
 			mods.each(function( i, t ){
 				if ( config.isModule ){
