@@ -550,7 +550,11 @@ $.config.type.each(function( i, k ){
 		
 		// 创建是否为标准JSON格式的数据方法
 		isJson : function( value ){
-			return value.constructor === {}.constructor ? true : false;
+			try{
+				return value.constructor === {}.constructor ? true : false;
+			}catch(e){
+				return false;
+			}
 		},
 		
 		// 创建是否为syQuery格式的方法
