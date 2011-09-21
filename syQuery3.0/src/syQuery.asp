@@ -427,7 +427,7 @@ $.augment( Array, {
 				value = array[++i] 
 			){}
 		}else{
-			for ( ; i < length; ) { 
+			for ( ; i < array.length; ) { 
 				if ( callback.apply( array[ i++ ], args ) === false ) 
 				{ break; }
 			}
