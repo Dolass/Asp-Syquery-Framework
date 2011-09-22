@@ -40,8 +40,8 @@
 	syQuery.css = {}
 	syQuery.config = {
 		debug : false,
-		host : "loader.cn/{where}",
-		file : ""
+		host : "webos.cn/{where}",
+		file : "assets/js/build"
 	}
 	
 	// 公用局部变量 结束
@@ -304,6 +304,8 @@
 				charset : "UTF-8"   // 设置编码
 			}, config);
 			
+			if ( urls.length == 0 ) return $.isFunction(config.complete) && config.complete(0);
+			
 			var len = urls.length,
 				self = this;
 				
@@ -389,6 +391,8 @@
 					complete : null
 				}, complete);
 			}
+			
+			if ( mods.length == 0 ) return $.isFunction(config.complete) && config.complete(0);
 			
 			if ( i + 1 > len ){
 				$.isFunction(config.complete) && config.complete(len);
