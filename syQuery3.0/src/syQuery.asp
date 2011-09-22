@@ -690,7 +690,7 @@ $.config.type.each(function( i, k ){
 		 */
 		add : function(key, fn, eqment){
 			if ( $[key] == undefined ){
-				dealEqMent(eqment); // 尝试加载前置环境
+				eqment && dealEqMent(eqment); // 尝试加载前置环境
 				$[key] = fn(); // 内置方法
 				$.addKey(key); // 防止重复
 			}else{
@@ -704,12 +704,13 @@ $.config.type.each(function( i, k ){
 		 * @param fn <function> 详细回调方法 其中第一个参数为该模块的返回值
 		 * @return anyObject
 		 */
-		use : function( key, fn ){
+		use : function( key, fn, eqment ){
 			if ( fn == undefined ){
 				return $[key];
 			}
 			
 			if ( $[key] != undefined ){
+				eqment && dealEqMent(eqment); // 尝试加载前置环境
 				return fn( $[key] );
 			}
 		},
@@ -726,7 +727,7 @@ $.config.type.each(function( i, k ){
 				key = "";
 			}
 			
-			dealEqMent(eqment); // 尝试加载前置环境
+			eqment && dealEqMent(eqment); // 尝试加载前置环境
 			
 			var tmpArr = [];
 			key.split(",").each(function( i, k ){
@@ -787,7 +788,7 @@ $.config.type.each(function( i, k ){
 	
 	function dealEqMent( eq ){
 		if ( eq != undefined ){
-			if ( eq.reqiure ) $.build( eq.reqiure );
+			if ( eq.require ) $.build( eq.require );
 		}
 	}
 	
