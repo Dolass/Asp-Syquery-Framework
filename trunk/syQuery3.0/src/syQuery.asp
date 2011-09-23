@@ -30,7 +30,7 @@ var $ = (function(){
 				return _Query[key];
 			}else{
 				// add to error eqment
-				_Query.error.push("syQuery error : key[" + key + "] exsit.");
+				_Query.error.push("syQuery error : $['" + key + "'] exsit.");
 			}
 		}else if ( _Query.isFunction( key ) ) {
 			// add to ready eqment
@@ -62,7 +62,8 @@ var $ = (function(){
 	_Query.root = ""; // 框架运行物理地址相对于根地址偏移的位置
 	_Query.charset = "utf-8"; // 框架编码
 	_Query.plugin = "syQuery3.0/build"; // 相对于网站跟目录的地址，不带/ （只填文件夹）
-	_Query.loaded = []; // 系统已经加载的其他模块名
+	_Query.module = {}; //系统已加载的模块
+	_Query.sysFile = "syQuery.{name}-min.asp";
 	
 	// syQuery 对象构造函数
 	_Query.fn = _Query.prototype = {
@@ -689,9 +690,9 @@ $.config.type.each(function( i, k ){
 		 * @return new function
 		 */
 		add : function(key, fn, eqment){
-			if ( $[key] == undefined ){
+			if ( $.module[key] == undefined ){
 				eqment && dealEqMent(eqment); // 尝试加载前置环境
-				$[key] = fn(); // 内置方法
+				$.module[key] = fn(); // 内置方法
 				$.addKey(key); // 防止重复
 			}else{
 				$.error.push("syQuery error : key[" + key + "] exsit.");
@@ -706,12 +707,12 @@ $.config.type.each(function( i, k ){
 		 */
 		use : function( key, fn, eqment ){
 			if ( fn == undefined ){
-				return $[key];
+				return $.module[key];
 			}
 			
-			if ( $[key] != undefined ){
+			if ( $.module[key] != undefined ){
 				eqment && dealEqMent(eqment); // 尝试加载前置环境
-				return fn( $[key] );
+				return fn( $.module[key] );
 			}
 		},
 		
@@ -731,7 +732,7 @@ $.config.type.each(function( i, k ){
 			
 			var tmpArr = [];
 			key.split(",").each(function( i, k ){
-				tmpArr.push($[k.trim()]);
+				tmpArr.push($.module[k.trim()]);
 			});
 
 			fn.apply(undefined, tmpArr);
@@ -775,9 +776,8 @@ $.config.type.each(function( i, k ){
 				if ( config.isModule ){
 					$.include(t);
 				}else{
-					if ( $.loaded.indexOf(t) == -1 ){
-						$.include(p + "syQuery." + t + "-min.asp");
-						$.loaded.push(t);
+					if ( $.module[t] == undefined){
+						$.include(p + $.sysFile.replace("{name}", t));
 					}
 				}
 			});
@@ -788,7 +788,7 @@ $.config.type.each(function( i, k ){
 	
 	function dealEqMent( eq ){
 		if ( eq != undefined ){
-			if ( eq.require ) $.build( eq.require );
+			if ( eq.require ) $.build( eq.require, eq.isModule );
 		}
 	}
 	
