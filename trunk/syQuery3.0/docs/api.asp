@@ -1,1 +1,5 @@
-﻿dasfhksfkasjfsdjafl fjsdalfjl
+﻿<%
+function A(){
+	return true;
+}
+%>
