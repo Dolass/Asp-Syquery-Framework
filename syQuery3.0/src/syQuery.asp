@@ -583,7 +583,7 @@ $.config.type.each(function( i, k ){
 				callbackTimeString = "callback_" + new Date().getTime(); // 字符串化
 			if (callback) URI += ";" + callbackTimeString + "=(" + _callback + ")();";
 			eval(URI);
-			return eval(callbackTimeString);
+			return eval(callbackTimeString) || undefined;
 		}
 		
 	});
