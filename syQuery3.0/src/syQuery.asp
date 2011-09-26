@@ -564,7 +564,7 @@ $.config.type.each(function( i, k ){
 		},
 		
 		// 动态获取include文件夹内容并加载对应位置运行
-		include : function( URI, callback ){
+		include : function( URI ){
 			if ( $.isArray(URI) ){
 				URI = URI.map(function(i, _item){
 					var o = new ActiveXObject($.config.ActivexObject.stream),
@@ -579,11 +579,7 @@ $.config.type.each(function( i, k ){
 			}
 
 			URI = URI.join(";");
-			var _callback = callback.toString(),
-				callbackTimeString = "callback_" + new Date().getTime(); // 字符串化
-			if (callback) URI += ";" + callbackTimeString + "=(" + _callback + ")();";
-			eval(URI);
-			return eval(callbackTimeString) || undefined;
+			return URI;
 		}
 		
 	});
@@ -782,10 +778,12 @@ $.config.type.each(function( i, k ){
 			
 			return mods.map(function( i, t ){
 				if ( isModule ){
-					return $.include(t, callback) || null;
+					eval($.include(t));
+					return $.isFunction(callback) ? callback() : null;
 				}else{
 					if ( $.module[t] == undefined){
-						return $.include(p + $.sysFile.replace("{name}", t), callback) || null;
+						eval($.include(p + $.sysFile.replace("{name}", t)));
+						return $.isFunction(callback) ? callback() : null;
 					}else{
 						return null;
 					}

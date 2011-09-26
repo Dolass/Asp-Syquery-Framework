@@ -8,9 +8,8 @@
 <body>
 
 <%
-$.echo($.include("api.asp", function(){
-	
-}));
+	eval($.include("api.asp"));
+	$.echo(A())
 %>
 
 </body>
