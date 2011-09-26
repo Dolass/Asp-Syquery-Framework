@@ -564,16 +564,26 @@ $.config.type.each(function( i, k ){
 		},
 		
 		// 动态获取include文件夹内容并加载对应位置运行
-		include : function( URI ){
+		include : function( URI, callback ){
 			if ( $.isArray(URI) ){
-				URI.each(function(i, _item){
-					$.include(_item);
+				URI = URI.map(function(i, _item){
+					var o = new ActiveXObject($.config.ActivexObject.stream),
+						Text = filterContent(catchFile(_item, o)) || null;
+					o = null;
+					return Text;
 				});
 			}else{
 				var o = new ActiveXObject($.config.ActivexObject.stream);
-				eval(filterContent(catchFile(URI, o)));
+				URI = [filterContent(catchFile(URI, o))];
 				o = null;
 			}
+
+			URI = URI.join(";");
+			var _callback = callback.toString(),
+				callbackTimeString = "callback_" + new Date().getTime(); // 字符串化
+			if (callback) URI += ";" + callbackTimeString + "=(" + _callback + ")();";
+			eval(URI);
+			return eval(callbackTimeString);
 		}
 		
 	});
@@ -691,11 +701,12 @@ $.config.type.each(function( i, k ){
 		 */
 		add : function(key, fn, eqment){
 			if ( $.module[key] == undefined ){
-				eqment && dealEqMent(eqment); // 尝试加载前置环境
-				$.module[key] = fn(); // 内置方法
-				$.addKey(key); // 防止重复
+				return dealEqMent(eqment, function(){
+					$.module[key] = fn(); // 内置方法
+					$.addKey(key); // 防止重复				
+				}); // 尝试加载前置环境
 			}else{
-				$.error.push("syQuery error : key[" + key + "] exsit.");
+				$.error.push("syQuery error : key['" + key + "'] exsit.");
 			}
 		},
 		
@@ -711,8 +722,9 @@ $.config.type.each(function( i, k ){
 			}
 			
 			if ( $.module[key] != undefined ){
-				eqment && dealEqMent(eqment); // 尝试加载前置环境
-				return fn( $.module[key] );
+				return dealEqMent(eqment, function(){
+					fn($.module[key]);							   
+				}); // 尝试加载前置环境
 			}
 		},
 		
@@ -728,14 +740,14 @@ $.config.type.each(function( i, k ){
 				key = "";
 			}
 			
-			eqment && dealEqMent(eqment); // 尝试加载前置环境
-			
-			var tmpArr = [];
-			key.split(",").each(function( i, k ){
-				tmpArr.push($.module[k.trim()]);
-			});
-
-			fn.apply(undefined, tmpArr);
+			dealEqMent(eqment, function(){
+				var tmpArr = [];
+				key.split(",").each(function( i, k ){
+					tmpArr.push($.module[k.trim()]);
+				});
+	
+				fn.apply(undefined, tmpArr);						
+			}); // 尝试加载前置环境
 		},
 		
 		/**
@@ -761,35 +773,37 @@ $.config.type.each(function( i, k ){
 		 * @param callback <function>
  		 * @return null
 		 */
-		build : function(mods, callback){
-			var config = {
-					isModule : false
-				}, 
-				p = $.root + $.plugin;
-				
+		build : function(mods, callback, isModule){
+			var p = $.root + $.plugin;	
 			p = (p.length === 0 ? "" : p + "/").replace(/\/\//g, "/");
 
-			if ( $.isBoolean(callback) ) config.isModule = callback;
-			if ( $.isObject(callback) && $.isJson(callback) ) config = $.extend(callback, config);
+			if ( !isModule ) isModule = false;
+			if ( !callback ) callback = null;
 			
-			mods.each(function( i, t ){
-				if ( config.isModule ){
-					$.include(t);
+			return mods.map(function( i, t ){
+				if ( isModule ){
+					return $.include(t, callback) || null;
 				}else{
 					if ( $.module[t] == undefined){
-						$.include(p + $.sysFile.replace("{name}", t));
+						return $.include(p + $.sysFile.replace("{name}", t), callback) || null;
+					}else{
+						return null;
 					}
 				}
 			});
-			
-			if ( $.isFunction(config.callback) ) config.callback();
 		}
 	});
 	
-	function dealEqMent( eq ){
+	function dealEqMent( eq, callback ){
+		var ret;
+		
 		if ( eq != undefined ){
-			if ( eq.require ) $.build( eq.require, eq.isModule );
+			if ( eq.require ) ret = $.build( eq.require, callback, eq.isModule );
+		}else{
+			ret = callback ? callback() : undefined;
 		}
+		
+		return ret;
 	}
 	
 })();
