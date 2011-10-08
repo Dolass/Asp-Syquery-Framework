@@ -40,7 +40,7 @@
 	syQuery.css = {}
 	syQuery.config = {
 		debug : false,
-		host : "webos.cn/{where}",
+		host : "syblog.net/{where}",
 		file : "assets/js/build"
 	}
 	
@@ -119,12 +119,12 @@
 			self.build(ment.require, function(){
 				if ( self.module[key] ){
 					if ( ment.cover ) {
-						self.module[key] = fn();
+						self.module[key] = fn.call(self);
 					}else{
 						self.log("exsit", "warn", "module {" + key + "}");
 					}
 				}else{
-					self.module[key] = fn();
+					self.module[key] = fn.call(self);
 				}
 			}, ment.file);
 		},
@@ -219,8 +219,8 @@
 					node.removeEventListener( "DOMContentLoaded", DOMContentLoaded, false );
 				};
 				node.addEventListener( "DOMContentLoaded", DOMContentLoaded, false );
-				node.addEventListener( "load", successCallback, false );
-				node.addEventListener( "error", errorCallback, false );
+				if (successCallback) node.addEventListener( "load", successCallback, false );
+				if (errorCallback) node.addEventListener( "error", errorCallback, false );
 			// FOR IE ETC..
 			} else if ( document.attachEvent ) {
 				DOMContentLoaded = function() {
@@ -228,7 +228,7 @@
 					if ( /loaded|complete/i.test(RS) ) {
                         node.onreadystatechange = null;
 						$.isFunction(oldCallback) && oldCallback();
-                        successCallback.call(node);
+                        $.isFunction(successCallback) && successCallback.call(node);
                     }
 				};
 				// 不考虑失败的情况，不得已而为之。
@@ -402,7 +402,9 @@
 					self.loadCsses(mods, config, ++i);
 				})
 			}
-		}
+		},
+		mouseRightControl : windowEventPreventDefault,
+		mouseDocumentClick : windowDocumentClickEventBindMethod
 	})
 	
 	// 页面加载完毕后需要绑定的方法
@@ -427,7 +429,7 @@
 							e.stopPropagation();
 							e.preventDefault();
 						}
-						callback();
+						$.isFunction(callback) && callback(e || window.event);
 					});
 				}
 			}
@@ -442,7 +444,7 @@
 					syQuery.Eve.documentClick.each(function(i, _domEvent){
 						if (($(_domEvent.dom)[0] == event.target) || ($(event.target).parents(_domEvent.dom).length !== 0))
 						{}else{
-							_domEvent.fn();
+							$.isFunction(_domEvent.fn) && _domEvent.fn();
 						}
 					});
 				});
