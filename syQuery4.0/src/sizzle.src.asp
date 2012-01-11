@@ -107,6 +107,9 @@ var sizzle = { _sizzle : sizzle },
 	if ( _base.length == 0 ) _base = "/";
 	D.base = (_base + D.base.replace(/^\//, "") + "/").replace(/\/+/g, "/");
 	
+	// get the server page by Request.ServerVariables
+	D.host = "http://" + Request.ServerVariables("HTTP_HOST");
+	
 	var regExpress = {
 		includeExp : /\<\!\-\-\#include\sfile\s?\=\s?\"(.+?)\"\s?\-\->/g,
 		includeFileExp : /file\=\"(.+)\"/,
